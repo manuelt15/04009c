@@ -22,10 +22,19 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "04009c",
-  description: "House of Access",
-  icons: {
-    icon: "/favicon.png",
+  title: "House of Access | 04009c",
+  description: "An experimental, disruptive universe. Exclusive access to designers from around the world — fashion, art, and beyond.",
+  openGraph: {
+    title: "House of Access | 04009c",
+    description: "An experimental, disruptive universe. Exclusive access to designers from around the world — fashion, art, and beyond.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "House of Access | 04009c",
+    description: "An experimental, disruptive universe. Exclusive access to designers from around the world — fashion, art, and beyond.",
+    images: ["/og-image.png"],
   },
 };
 
