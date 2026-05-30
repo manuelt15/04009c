@@ -15,36 +15,29 @@ const NAV = [
 ];
 
 function IconSun() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-12.37l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0zM7.05 18.36l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0z"/>
-    </svg>
-  );
+  return <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-12.37l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0zM7.05 18.36l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0z"/></svg>;
 }
-
 function IconMoon() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
-    </svg>
-  );
+  return <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>;
 }
 
 export default function AdminSidebar() {
-  const pathname = usePathname();
-  const router   = useRouter();
+  const pathname  = usePathname();
+  const router    = useRouter();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [open, setOpen]       = useState(false);
 
   useEffect(() => setMounted(true), []);
+  useEffect(() => setOpen(false), [pathname]);
 
   async function handleLogout() {
     await fetch("/api/auth/admin-logout", { method: "POST" });
     router.push("/admin/login");
   }
 
-  return (
-    <aside className="w-56 min-h-screen bg-[var(--theme-bg)] border-r border-border flex flex-col shrink-0 transition-colors duration-300">
+  const sidebarContent = (
+    <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="flex items-center gap-2 px-5 py-5 border-b border-border">
         <Image src="/caballo_blanco.png" alt="04009c" width={22} height={22} className="object-contain opacity-80" />
@@ -76,7 +69,7 @@ export default function AdminSidebar() {
         </ul>
       </nav>
 
-      {/* Footer — tema + logout */}
+      {/* Footer */}
       <div className="px-5 py-4 border-t border-border flex flex-col gap-3">
         {mounted && (
           <button
@@ -94,6 +87,46 @@ export default function AdminSidebar() {
           ← CERRAR SESIÓN
         </button>
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex w-56 min-h-screen bg-[var(--theme-bg)] border-r border-border flex-col shrink-0 transition-colors duration-300">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile — top bar + drawer */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-[var(--theme-bg)] border-b border-border flex items-center justify-between px-4 py-3">
+        <div className="flex items-center gap-2">
+          <Image src="/caballo_blanco.png" alt="04009c" width={20} height={20} className="object-contain opacity-80" />
+          <span className="font-brand text-sm text-off-white tracking-widest">04009c</span>
+          <span className="font-terminal text-[9px] text-amber/60 ml-1">ADMIN</span>
+        </div>
+        <button
+          onClick={() => setOpen((p) => !p)}
+          className="font-terminal text-[11px] text-dim hover:text-off-white tracking-widest uppercase transition-colors"
+        >
+          {open ? "✕" : "☰ MENÚ"}
+        </button>
+      </div>
+
+      {/* Mobile drawer overlay */}
+      {open && (
+        <div className="md:hidden fixed inset-0 z-40" onClick={() => setOpen(false)}>
+          <div className="absolute inset-0 bg-black/60" />
+          <aside
+            className="absolute top-0 left-0 w-64 h-full bg-[var(--theme-bg)] border-r border-border"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+
+      {/* Mobile spacer so content doesn't hide behind top bar */}
+      <div className="md:hidden h-[53px] w-0 shrink-0" />
+    </>
   );
 }

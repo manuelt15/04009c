@@ -33,10 +33,10 @@ export default function AdminSettings() {
   }
 
   return (
-    <div className="p-6 flex flex-col gap-6">
+    <div className="p-4 md:p-6 pt-16 md:pt-6 flex flex-col gap-6">
       <div>
         <span className="data-label">// CONFIGURACIÓN</span>
-        <h1 className="font-display text-3xl text-off-white tracking-wider">ACCESO</h1>
+        <h1 className="font-display text-2xl md:text-3xl text-off-white tracking-wider">ACCESO</h1>
       </div>
 
       {msg && (
@@ -49,7 +49,7 @@ export default function AdminSettings() {
       <div className="bg-surface border border-border p-5 flex flex-col gap-4">
         <span className="data-label">// CONTRASEÑA DEL GATE</span>
         <p className="font-terminal text-[11px] text-dim">La clave que los miembros introducen para acceder a la tienda.</p>
-        <form onSubmit={handleGatePassword} className="flex gap-3">
+        <form onSubmit={handleGatePassword} className="flex flex-col sm:flex-row gap-3">
           <input type="text" value={gatePassword} onChange={(e) => setGatePassword(e.target.value)}
             placeholder="NUEVA CONTRASEÑA"
             className="flex-1 bg-black border border-border text-off-white font-terminal text-sm px-4 py-2 focus:outline-none focus:border-amber transition-colors placeholder:text-dim/50" />

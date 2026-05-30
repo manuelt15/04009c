@@ -39,10 +39,10 @@ export default function AdminOrders() {
   }
 
   return (
-    <div className="p-6 flex flex-col gap-6">
+    <div className="p-4 md:p-6 pt-16 md:pt-6 flex flex-col gap-6">
       <div>
         <span className="data-label">// GESTIÓN</span>
-        <h1 className="font-display text-3xl text-off-white tracking-wider">PEDIDOS</h1>
+        <h1 className="font-display text-2xl md:text-3xl text-off-white tracking-wider">PEDIDOS</h1>
       </div>
 
       {orders.length === 0 ? (
@@ -52,7 +52,7 @@ export default function AdminOrders() {
         </div>
       ) : (
         <div className="bg-surface border border-border overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[640px]">
             <thead className="border-b border-border">
               <tr>
                 {["PEDIDO","CLIENTE","CIUDAD","TOTAL","ESTADO","CAMBIAR"].map((h) => (

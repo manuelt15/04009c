@@ -48,11 +48,11 @@ export default function AdminProducts() {
   }
 
   return (
-    <div className="p-6 flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 md:p-6 pt-16 md:pt-6 flex flex-col gap-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <span className="data-label">// GESTIÓN</span>
-          <h1 className="font-display text-3xl text-off-white tracking-wider">PRODUCTOS</h1>
+          <h1 className="font-display text-2xl md:text-3xl text-off-white tracking-wider">PRODUCTOS</h1>
         </div>
         <button onClick={() => { setForm(EMPTY); setEditing(null); setShowForm(true); }}
           className="font-terminal text-[11px] tracking-widest uppercase px-4 py-2 border border-amber text-amber hover:bg-amber hover:text-black transition-colors">
@@ -62,9 +62,9 @@ export default function AdminProducts() {
 
       {/* Formulario */}
       {showForm && (
-        <div className="bg-surface border border-border p-5 flex flex-col gap-3">
+        <div className="bg-surface border border-border p-4 md:p-5 flex flex-col gap-3">
           <span className="data-label">{editing ? "// EDITAR PRODUCTO" : "// NUEVO PRODUCTO"}</span>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {[
               { key: "name", label: "NOMBRE", type: "text" },
               { key: "slug", label: "SLUG", type: "text" },
@@ -119,7 +119,7 @@ export default function AdminProducts() {
 
       {/* Tabla */}
       <div className="bg-surface border border-border overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full min-w-[600px]">
           <thead className="border-b border-border">
             <tr>
               {["REF","NOMBRE","CAT","PRECIO","ESTADO","ACCIONES"].map((h) => (

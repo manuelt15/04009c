@@ -23,11 +23,11 @@ export default function AdminSubscribers() {
   }
 
   return (
-    <div className="p-6 flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 md:p-6 pt-16 md:pt-6 flex flex-col gap-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <span className="data-label">// GESTIÓN</span>
-          <h1 className="font-display text-3xl text-off-white tracking-wider">SUSCRIPTORES</h1>
+          <h1 className="font-display text-2xl md:text-3xl text-off-white tracking-wider">SUSCRIPTORES</h1>
         </div>
         <button onClick={exportCSV}
           className="font-terminal text-[11px] tracking-widest uppercase px-4 py-2 border border-border text-dim hover:border-amber hover:text-amber transition-colors">
@@ -35,7 +35,7 @@ export default function AdminSubscribers() {
         </button>
       </div>
 
-      <div className="bg-surface border border-border">
+      <div className="bg-surface border border-border overflow-x-auto">
         <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <span className="font-terminal text-[10px] text-dim">{subscribers.length} REGISTRADOS</span>
         </div>
@@ -45,7 +45,7 @@ export default function AdminSubscribers() {
             <span className="font-terminal text-[11px] text-dim">// SIN SUSCRIPTORES AÚN</span>
           </div>
         ) : (
-          <table className="w-full">
+          <table className="w-full min-w-[560px]">
             <thead className="border-b border-border">
               <tr>
                 {["NOMBRE","EMAIL","MÓVIL","CIUDAD","FECHA"].map((h) => (
