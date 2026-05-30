@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoose";
 import { Subscriber } from "@/lib/models/subscriber";
+import { sendSubscriberConfirmation, sendOwnerNotification } from "@/lib/mailer";
 
 export async function POST(req: NextRequest) {
   try {
@@ -27,6 +28,13 @@ export async function POST(req: NextRequest) {
     }
 
     await Subscriber.create({ name, email, mobile, city });
+
+    // Emails en paralelo — si fallan no bloquean el registro
+    Promise.all([
+      sendSubscriberConfirmation(email, name),
+      sendOwnerNotification({ name, email, mobile, city }),
+    ]).catch(() => {});
+
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "ERROR DE SERVIDOR" }, { status: 500 });
