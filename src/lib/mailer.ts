@@ -1,5 +1,13 @@
 import nodemailer from "nodemailer";
 
+const esc = (s: string) =>
+  String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -18,7 +26,7 @@ export async function sendSubscriberConfirmation(to: string, name: string) {
         <p style="font-size:11px;letter-spacing:0.2em;color:#F0A500;text-transform:uppercase;margin:0 0 24px;">// REGISTRO CONFIRMADO</p>
         <h1 style="font-size:32px;color:#E2E2E2;letter-spacing:0.3em;margin:0 0 24px;">04009c</h1>
         <p style="font-size:14px;line-height:1.7;color:rgba(226,226,226,0.8);margin:0 0 16px;">
-          Hola ${name},
+          Hola ${esc(name)},
         </p>
         <p style="font-size:14px;line-height:1.7;color:rgba(226,226,226,0.8);margin:0 0 32px;">
           Tu solicitud de acceso ha sido recibida. Te contactaremos cuando tu acceso esté listo.
@@ -48,10 +56,10 @@ export async function sendOwnerNotification(subscriber: {
         <p style="font-size:11px;letter-spacing:0.2em;color:#F0A500;text-transform:uppercase;margin:0 0 24px;">// NUEVO SUSCRIPTOR</p>
         <table style="width:100%;border-collapse:collapse;">
           ${[
-            ["NOMBRE", subscriber.name],
-            ["EMAIL",  subscriber.email],
-            ["MÓVIL",  subscriber.mobile || "—"],
-            ["CIUDAD", subscriber.city   || "—"],
+            ["NOMBRE", esc(subscriber.name)],
+            ["EMAIL",  esc(subscriber.email)],
+            ["MÓVIL",  esc(subscriber.mobile || "—")],
+            ["CIUDAD", esc(subscriber.city   || "—")],
           ].map(([label, value]) => `
             <tr>
               <td style="font-size:10px;letter-spacing:0.15em;color:#F0A500;text-transform:uppercase;padding:8px 0 4px;">${label}</td>
