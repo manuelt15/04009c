@@ -21,7 +21,7 @@ export default function RevenueChart({ data }: Props) {
         <YAxis tick={{ fontFamily: "IBM Plex Mono", fontSize: 10, fill: "#6B6B6B" }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}€`} />
         <Tooltip
           contentStyle={{ background: "#1A1A1A", border: "1px solid #2A2A2A", fontFamily: "IBM Plex Mono", fontSize: 11, color: "#E2E2E2" }}
-          formatter={(v: number) => [`${v.toLocaleString("es-ES")}€`, "Ingresos"]}
+          formatter={(v) => [`${Number(v).toLocaleString("es-ES")}€`, "Ingresos"]}
           cursor={{ fill: "rgba(240,165,0,0.05)" }}
         />
         <Bar dataKey="ingresos" radius={0}>
