@@ -7,14 +7,20 @@ const ADMIN_SECRET  = new TextEncoder().encode(process.env.JWT_SECRET_ADMIN!);
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  if (pathname.startsWith("/store") || pathname.startsWith("/api/store")) {
+  // El catálogo (páginas y /api/products) solo con la sesión de miembro que da la clave de acceso
+  const isMemberApi = pathname.startsWith("/api/products");
+  if (pathname.startsWith("/store") || isMemberApi) {
     const token = req.cookies.get("member_token")?.value;
-    if (!token) return NextResponse.redirect(new URL("/", req.url));
+    const denied = () =>
+      isMemberApi
+        ? NextResponse.json({ error: "NO AUTORIZADO" }, { status: 401 })
+        : NextResponse.redirect(new URL("/", req.url));
+    if (!token) return denied();
     try {
       await jwtVerify(token, MEMBER_SECRET);
       return NextResponse.next();
     } catch {
-      return NextResponse.redirect(new URL("/", req.url));
+      return denied();
     }
   }
 
@@ -38,5 +44,5 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/store/:path*", "/admin/:path*", "/api/admin/:path*"],
+  matcher: ["/store/:path*", "/api/products/:path*", "/admin/:path*", "/api/admin/:path*"],
 };
