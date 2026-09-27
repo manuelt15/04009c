@@ -30,7 +30,7 @@ export default function AdminSubscribers() {
           <h1 className="font-display text-2xl md:text-3xl text-off-white tracking-wider">SUSCRIPTORES</h1>
         </div>
         <button onClick={exportCSV}
-          className="font-terminal text-[11px] tracking-widest uppercase px-4 py-2 border border-border text-dim hover:border-amber hover:text-amber transition-colors">
+          className="font-terminal text-[11px] tracking-widest uppercase px-4 py-2 border border-border text-dim hover:border-brand-red hover:text-brand-red press">
           EXPORTAR CSV
         </button>
       </div>
@@ -60,7 +60,7 @@ export default function AdminSubscribers() {
                   <td className="px-4 py-3 font-terminal text-[11px] text-dim">{s.email}</td>
                   <td className="px-4 py-3 font-terminal text-[11px] text-dim">{s.mobile || "—"}</td>
                   <td className="px-4 py-3 font-terminal text-[11px] text-dim">{s.city || "—"}</td>
-                  <td className="px-4 py-3 font-terminal text-[11px] text-amber/60">
+                  <td className="px-4 py-3 font-terminal text-[11px] text-brand-red/60">
                     {new Date(s.createdAt).toLocaleDateString("es-ES")}
                   </td>
                 </tr>

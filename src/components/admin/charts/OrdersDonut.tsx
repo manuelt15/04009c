@@ -3,11 +3,11 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 const COLORS: Record<string, string> = {
-  pendiente:  "#F0A500",
-  confirmado: "#04009c",
+  pendiente:  "#FF0000",
+  confirmado: "rgba(226, 226, 226, 0.45)",
   enviado:    "#E2E2E2",
   entregado:  "#6B6B6B",
-  cancelado:  "#FF0000",
+  cancelado:  "#2A2A2A",
 };
 
 interface Props {
@@ -20,7 +20,7 @@ export default function OrdersDonut({ data }: Props) {
   return (
     <ResponsiveContainer width="100%" height={180}>
       <PieChart>
-        <Pie data={formatted} cx="50%" cy="50%" innerRadius={45} outerRadius={70} dataKey="value" strokeWidth={0}>
+        <Pie animationDuration={400} animationEasing="ease-out" data={formatted} cx="50%" cy="50%" innerRadius={45} outerRadius={70} dataKey="value" strokeWidth={0}>
           {formatted.map((entry, i) => (
             <Cell key={i} fill={COLORS[entry.key] ?? "#6B6B6B"} />
           ))}

@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db/mongoose";
 import { Login } from "@/lib/models/login";
 import { Admin } from "@/lib/models/admin";
 import { requireAdmin } from "@/lib/auth/admin-guard";
+import { verifyAdminToken } from "@/lib/auth/jwt";
 
 export async function PATCH(req: NextRequest) {
   const denied = await requireAdmin(req);
@@ -32,11 +33,16 @@ export async function PATCH(req: NextRequest) {
         return NextResponse.json({ error: "PARÁMETROS INVÁLIDOS" }, { status: 400 });
       }
 
+      // El admin es el de la sesión (id en el token), no el que coincida con el usuario nuevo
+      const { sub } = await verifyAdminToken(req.cookies.get("admin_token")?.value ?? "");
+      if (!sub) return NextResponse.json({ error: "SESIÓN ANTIGUA: VUELVE A INICIAR SESIÓN" }, { status: 401 });
       await connectDB();
-      // Buscar solo por username desde el token (no por contraseña en query)
-      const admin = await Admin.findOne({ username: newUsername }).select("+password") ?? await Admin.findOne({});
+      const admin = await Admin.findById(sub).select("+password");
       if (!admin || !(await bcrypt.compare(currentPassword, admin.password))) {
         return NextResponse.json({ error: "CONTRASEÑA ACTUAL INCORRECTA" }, { status: 401 });
+      }
+      if (newUsername !== admin.username && (await Admin.exists({ username: newUsername }))) {
+        return NextResponse.json({ error: "ESE USUARIO YA EXISTE" }, { status: 409 });
       }
       const newHash = await bcrypt.hash(newPassword, 12);
       await Admin.findByIdAndUpdate(admin._id, { username: newUsername, password: newHash });

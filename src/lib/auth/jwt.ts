@@ -15,8 +15,8 @@ export async function verifyMemberToken(token: string) {
   return payload;
 }
 
-export async function signAdminToken(): Promise<string> {
-  return new SignJWT({ role: "admin" })
+export async function signAdminToken(adminId: string): Promise<string> {
+  return new SignJWT({ role: "admin", sub: adminId })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("8h")
     .sign(ADMIN_SECRET);

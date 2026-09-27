@@ -22,11 +22,11 @@ export default function RevenueChart({ data }: Props) {
         <Tooltip
           contentStyle={{ background: "#1A1A1A", border: "1px solid #2A2A2A", fontFamily: "IBM Plex Mono", fontSize: 11, color: "#E2E2E2" }}
           formatter={(v) => [`${Number(v).toLocaleString("es-ES")}€`, "Ingresos"]}
-          cursor={{ fill: "rgba(240,165,0,0.05)" }}
+          cursor={{ fill: "rgba(255,0,0,0.06)" }}
         />
-        <Bar dataKey="ingresos" radius={0}>
+        <Bar animationDuration={400} animationEasing="ease-out" dataKey="ingresos" radius={0}>
           {formatted.map((_, i) => (
-            <Cell key={i} fill={i === formatted.length - 1 ? "#F0A500" : "#04009c"} />
+            <Cell key={i} fill={i === formatted.length - 1 ? "#FF0000" : "#E2E2E2"} />
           ))}
         </Bar>
       </BarChart>

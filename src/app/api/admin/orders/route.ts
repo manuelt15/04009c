@@ -24,7 +24,9 @@ export async function PATCH(req: NextRequest) {
     const status = typeof body.status === "string" ? body.status : null;
     if (!id || !status) return NextResponse.json({ error: "PARÁMETROS INVÁLIDOS" }, { status: 400 });
     await connectDB();
-    await Order.findByIdAndUpdate(id, { status });
+    const STATUSES = ["pendiente", "confirmado", "enviado", "entregado", "cancelado"];
+    if (!STATUSES.includes(status)) return NextResponse.json({ error: "ESTADO INVÁLIDO" }, { status: 400 });
+    await Order.findByIdAndUpdate(id, { status, $push: { statusHistory: { status, at: new Date() } } });
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "ERROR DE SERVIDOR" }, { status: 500 });

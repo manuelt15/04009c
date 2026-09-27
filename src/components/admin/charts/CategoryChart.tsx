@@ -16,9 +16,9 @@ export default function CategoryChart({ data }: Props) {
         <YAxis type="category" dataKey="cat" tick={{ fontFamily: "IBM Plex Mono", fontSize: 10, fill: "#6B6B6B" }} axisLine={false} tickLine={false} width={90} />
         <Tooltip
           contentStyle={{ background: "#1A1A1A", border: "1px solid #2A2A2A", fontFamily: "IBM Plex Mono", fontSize: 11, color: "#E2E2E2" }}
-          cursor={{ fill: "rgba(240,165,0,0.05)" }}
+          cursor={{ fill: "rgba(255,0,0,0.06)" }}
         />
-        <Bar dataKey="total" fill="#04009c" radius={0} />
+        <Bar animationDuration={400} animationEasing="ease-out" dataKey="total" fill="#E2E2E2" radius={0} />
       </BarChart>
     </ResponsiveContainer>
   );

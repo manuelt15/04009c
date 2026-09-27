@@ -110,7 +110,7 @@ export default function AdminDashboard() {
                     <p className="font-terminal text-[11px] text-off-white">{s.name}</p>
                     <p className="font-terminal text-[10px] text-dim truncate max-w-[200px]">{s.email}</p>
                   </div>
-                  <span className="font-terminal text-[10px] text-amber/60">{s.city || "—"}</span>
+                  <span className="font-terminal text-[10px] text-brand-red/60">{s.city || "—"}</span>
                 </li>
               ))}
             </ul>
