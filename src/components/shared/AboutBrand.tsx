@@ -16,19 +16,7 @@ export default function AboutBrand() {
   }
 
   return (
-    <main className="relative min-h-screen bg-brand-blue flex flex-col items-center justify-between overflow-hidden grain">
-
-      {/* Decoraciones de esquina */}
-      <div className="absolute top-4 left-4 font-terminal text-[10px] text-amber/60 leading-relaxed pointer-events-none">
-        <p>// BRAND FILE</p>
-        <p>STATUS: ACTIVE</p>
-        <p>EST: MMXXIV</p>
-      </div>
-      <div className="absolute top-4 right-4 font-terminal text-[10px] text-amber/60 text-right leading-relaxed pointer-events-none">
-        <p>DOC: INFO-001</p>
-        <p>ACCESS: PUBLIC</p>
-        <p>REF: 04009c-002</p>
-      </div>
+    <main className="relative min-h-dvh bg-[var(--theme-bg)] flex flex-col items-center justify-between overflow-hidden grain">
 
       {/* Contenido central */}
       <div className="flex-1 flex flex-col items-center justify-center gap-8 px-8 py-16 w-full max-w-2xl text-center">
@@ -47,7 +35,7 @@ export default function AboutBrand() {
           <h1 className="font-brand text-5xl sm:text-6xl text-brand-red tracking-widest uppercase leading-tight">
             04009c
           </h1>
-          <p className="font-terminal text-[11px] text-amber/80 tracking-[0.3em] uppercase">
+          <p className="font-terminal text-[11px] text-off-white/80 tracking-[0.3em] uppercase">
             The House of Access
           </p>
         </div>
@@ -55,22 +43,22 @@ export default function AboutBrand() {
         {/* Separador estilo terminal */}
         <div className="flex items-center gap-3 w-full max-w-xs">
           <span className="flex-1 h-px bg-off-white/20" />
-          <span className="font-terminal text-[9px] text-amber/50 tracking-widest">// MANIFESTO</span>
+          <span className="font-terminal text-[9px] text-off-white/50 tracking-widest">{"// MANIFESTO"}</span>
           <span className="flex-1 h-px bg-off-white/20" />
         </div>
 
         {/* Descripción */}
         <p className="font-body text-base sm:text-lg text-off-white/90 leading-relaxed max-w-xl">
-          Our mission is to find and provide exclusivity through designers from around the world,
-          merging established names with emerging talent inside a meticulously curated universe.
+          Nuestra misión es encontrar y ofrecer exclusividad a través de diseñadores de todo el mundo,
+          uniendo nombres consagrados con talento emergente dentro de un universo cuidado al detalle.
         </p>
         <p className="font-body text-base sm:text-lg text-off-white/90 leading-relaxed max-w-xl">
-          Different brands, minds, and ideas coexist under a shared language, blending art in all
-          its forms: fashion, jewelry, fine art, sculpture and beyond.
+          Marcas, mentes e ideas distintas conviven bajo un lenguaje común que mezcla el arte en
+          todas sus formas: moda, joyería, bellas artes, escultura y más allá.
         </p>
         <p className="font-body text-base sm:text-lg text-off-white/90 leading-relaxed max-w-xl">
-          An experimental, disruptive, and dark proposal, openly built through collaborations that
-          expand this narrative and bring it deeper into the world of{" "}
+          Una propuesta experimental, disruptiva y oscura, construida abiertamente a través de
+          colaboraciones que amplían este relato y lo llevan más adentro del mundo de{" "}
           <span className="font-brand text-brand-red">04009c</span>.
         </p>
 
@@ -79,7 +67,7 @@ export default function AboutBrand() {
           onClick={handleBack}
           className="font-terminal text-[11px] text-off-white/50 hover:text-brand-red tracking-widest uppercase transition-colors mt-4 underline underline-offset-4"
         >
-          ← BACK
+          ← VOLVER
         </button>
       </div>
 

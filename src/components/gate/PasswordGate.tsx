@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { useToast } from "@/components/shared/Toaster";
 
 function IconSpeaker() {
   return (
@@ -23,7 +24,6 @@ function IconMuted() {
 
 export default function PasswordGate() {
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showInput, setShowInput] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -31,6 +31,7 @@ export default function PasswordGate() {
   const inputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const router = useRouter();
+  const toast = useToast();
 
   useEffect(() => {
     if (showInput) inputRef.current?.focus();
@@ -51,10 +52,13 @@ export default function PasswordGate() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!password.trim()) return;
+    if (!password.trim()) {
+      toast("INTRODUCE EL CÓDIGO DE ACCESO", "error");
+      inputRef.current?.focus();
+      return;
+    }
 
     setLoading(true);
-    setError("");
 
     try {
       const res = await fetch("/api/auth/login", {
@@ -66,33 +70,37 @@ export default function PasswordGate() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error ?? "// ERROR: CÓDIGO INVÁLIDO");
+        toast(data.error ?? "CÓDIGO INVÁLIDO", "error");
         setPassword("");
         inputRef.current?.focus();
       } else {
+        toast("ACCESO CONCEDIDO", "success");
         router.push("/store");
       }
     } catch {
-      setError("// ERROR: CONEXIÓN FALLIDA");
+      toast("CONEXIÓN FALLIDA", "error");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <main className="relative min-h-screen bg-brand-blue flex flex-col items-center justify-between overflow-hidden grain">
+    <main className="relative min-h-dvh bg-[var(--theme-bg)] flex flex-col items-center justify-between overflow-hidden grain">
       <audio ref={audioRef} src="/alien-static.mp3" loop preload="auto" />
 
       {/* Decoraciones de esquina — estilo terminal */}
-      <div className="absolute top-4 left-4 font-terminal text-[10px] text-amber/60 leading-relaxed pointer-events-none">
-        <p>// SYS.INIT</p>
-        <p>FILE: ACCESS_GATE</p>
-        <p>COORD: 40.4168° N 3.7038° W</p>
+      <div className="absolute top-4 left-4 font-terminal text-[10px] text-brand-red leading-relaxed">
+        <p className="pointer-events-none">34.0522° N 118.2437° W</p>
+        <button
+          onClick={() => router.push("/admin/login")}
+          className="uppercase hover:text-off-white transition-colors"
+        >
+          ADMINISTRADOR
+        </button>
       </div>
-      <div className="absolute top-4 right-4 font-terminal text-[10px] text-amber/60 text-right leading-relaxed pointer-events-none">
-        <p>VERSION: 2.0</p>
-        <p>STATUS: LOCKED</p>
-        <p>REF: 04009c-001</p>
+      <div className="absolute top-4 right-4 font-terminal text-[10px] text-brand-red text-right leading-relaxed pointer-events-none">
+        <p>BLOQUEADA</p>
+        <p>04009c</p>
       </div>
 
       {/* Centro */}
@@ -121,7 +129,7 @@ export default function PasswordGate() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="font-brand text-5xl sm:text-6xl text-off-white tracking-widest uppercase cursor-pointer hover:text-amber transition-colors duration-200 bg-transparent border-none"
+          className="font-brand text-5xl sm:text-6xl text-off-white tracking-widest uppercase cursor-pointer hover:text-brand-red transition-colors duration-200 bg-transparent border-none"
         >
           04009c
         </motion.button>
@@ -134,10 +142,10 @@ export default function PasswordGate() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
               className="w-full flex flex-col gap-3"
             >
-              <span className="data-label text-center">// INTRODUCE EL CÓDIGO DE ACCESO</span>
+              <span className="font-terminal text-[0.65rem] tracking-[0.12em] uppercase text-brand-red text-center">{"// INTRODUCE EL CÓDIGO DE ACCESO"}</span>
 
               <input
                 ref={inputRef}
@@ -146,29 +154,17 @@ export default function PasswordGate() {
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
                 placeholder="_ _ _ _ _ _"
-                className="w-full bg-transparent border border-amber text-off-white font-terminal text-sm text-center tracking-[0.3em] px-4 py-3 placeholder:text-amber/40 focus:outline-none focus:border-off-white transition-colors disabled:opacity-50"
+                className="w-full bg-transparent border border-brand-red text-off-white font-terminal text-sm text-center tracking-[0.3em] px-4 py-3 placeholder:text-brand-red/60 focus:outline-none focus:border-off-white transition-colors disabled:opacity-50"
               />
 
               <button
                 type="submit"
-                disabled={loading || !password.trim()}
-                className="w-full bg-off-white text-brand-blue font-terminal text-sm tracking-widest uppercase py-3 hover:bg-amber transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                disabled={loading}
+                className="w-full bg-off-white text-brand-blue font-terminal text-sm tracking-widest uppercase py-3 hover:bg-brand-red hover:text-off-white press disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {loading ? "VERIFICANDO..." : "ACCEDER"}
               </button>
 
-              <AnimatePresence>
-                {error && (
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="font-terminal text-[11px] text-brand-red text-center tracking-wider"
-                  >
-                    {error}
-                  </motion.p>
-                )}
-              </AnimatePresence>
             </motion.form>
           )}
         </AnimatePresence>

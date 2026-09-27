@@ -32,11 +32,11 @@
   --color-secondary-foreground: var(--color-off-white);
   --color-muted:        var(--theme-surface);
   --color-muted-foreground: var(--color-dim);
-  --color-accent:       var(--color-amber);
-  --color-accent-foreground: var(--color-black);
+  --color-accent:       var(--color-brand-red);
+  --color-accent-foreground: var(--color-off-white);
   --color-destructive:  var(--color-brand-red);
   --color-input:        var(--theme-surface);
-  --color-ring:         var(--color-amber);
+  --color-ring:         var(--color-brand-red);
   --color-card:         var(--theme-surface);
   --color-card-foreground: var(--color-off-white);
 
@@ -71,6 +71,13 @@
     box-sizing: border-box;
   }
 
+  /* iOS hace zoom al enfocar un campo con letra < 16px: en móvil todos a 16px */
+  @media (max-width: 639px) {
+    input, textarea, select {
+      font-size: 16px !important;
+    }
+  }
+
   body {
     background-color: var(--theme-bg);
     @apply text-off-white font-body;
@@ -95,13 +102,21 @@
   }
 }
 
+/* ─── Curvas de animación ─── */
+:root {
+  --motion-ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
+  --motion-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --motion-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
 /* ─── View Transitions ─── */
 @layer base {
+  /* Salida más rápida que la entrada: se navega a menudo entre páginas */
   ::view-transition-old(root) {
-    animation: 300ms ease both fade-out;
+    animation: 150ms var(--motion-ease-out) both fade-out;
   }
   ::view-transition-new(root) {
-    animation: 300ms ease both fade-in;
+    animation: 200ms var(--motion-ease-out) both fade-in;
   }
 
   @keyframes fade-out {
@@ -113,11 +128,18 @@
     to   { opacity: 1; }
   }
 
-  /* El elemento con view-transition-name morphea automáticamente — sin fade */
-  ::view-transition-old(product-image),
-  ::view-transition-new(product-image) {
-    animation: none;
-    mix-blend-mode: normal;
+  /* Foto de producto que viaja de la card a la ficha (y vuelta): movimiento en pantalla */
+  ::view-transition-group(*.product) {
+    animation-duration: 350ms;
+    animation-timing-function: var(--motion-ease-in-out);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+      animation: none !important;
+    }
   }
 }
 
@@ -133,7 +155,47 @@
     font-size: 0.65rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--color-amber);
+    color: var(--color-brand-red);
+  }
+
+  /* Contenedor de foto que participa en la transición card → ficha */
+  .vt-product {
+    view-transition-class: product;
+  }
+
+  /* Respuesta al pulsar: cualquier botón que se pueda apretar */
+  .press {
+    transition-property: color, background-color, border-color, opacity, transform;
+    transition-duration: 160ms;
+    transition-timing-function: var(--motion-ease-out);
+  }
+  .press:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  /* Entrada de las cards del catálogo (retardo escalonado por style) */
+  .card-in {
+    animation: card-in 250ms var(--motion-ease-out) both;
+  }
+  @keyframes card-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card-in { animation-name: card-in-fade; }
+    @keyframes card-in-fade {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+  }
+
+  /* Fotos de producto: mismo encuadre y mismo tratamiento sea cual sea la foto de origen.
+     El fondo claro del contenedor (bg-off-white) se come el fondo de la foto con multiply. */
+  .product-photo {
+    object-fit: contain;
+    padding: 12%;
+    mix-blend-mode: multiply;
+    filter: grayscale(1) contrast(1.1);
   }
 
   .scan-border {

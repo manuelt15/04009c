@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { useToast } from "@/components/shared/Toaster";
 
-const FIELDS = [
+const FIELDS: { key: "name" | "email" | "mobile" | "city"; label: string; type: string; placeholder: string; required: boolean }[] = [
   { key: "name",   label: "NOMBRE",   type: "text",  placeholder: "Tu nombre", required: true  },
   { key: "email",  label: "EMAIL",    type: "email", placeholder: "tu@email.com", required: true  },
   { key: "mobile", label: "MÓVIL",    type: "tel",   placeholder: "+34 600 000 000", required: false },
@@ -16,8 +17,8 @@ export default function SubscribePage() {
   const router = useRouter();
   const [form, setForm]       = useState({ name: "", email: "", mobile: "", city: "" });
   const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState("");
   const [success, setSuccess] = useState(false);
+  const toast = useToast();
 
   function handleBack() {
     const navigate = () => router.back();
@@ -30,8 +31,18 @@ export default function SubscribePage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    const missing = FIELDS.filter((f) => f.required && !form[f.key].trim()).map((f) => f.label);
+    if (missing.length > 0) {
+      toast(`FALTAN DATOS: ${missing.join(" Y ")}`, "error");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      toast("EL EMAIL NO ES VÁLIDO", "error");
+      return;
+    }
+
     setLoading(true);
-    setError("");
 
     try {
       const res = await fetch("/api/subscribe", {
@@ -42,31 +53,21 @@ export default function SubscribePage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error ?? "// ERROR DESCONOCIDO");
+        toast(data.error ?? "ERROR DESCONOCIDO", "error");
       } else {
+        toast("SOLICITUD ENVIADA", "success");
         setSuccess(true);
       }
     } catch {
-      setError("// ERROR: CONEXIÓN FALLIDA");
+      toast("CONEXIÓN FALLIDA", "error");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <main className="relative min-h-screen bg-brand-blue flex flex-col items-center justify-between overflow-hidden grain">
+    <main className="relative min-h-dvh bg-[var(--theme-bg)] flex flex-col items-center justify-between overflow-hidden grain">
 
-      {/* Decoraciones de esquina */}
-      <div className="absolute top-4 left-4 font-terminal text-[10px] text-amber/60 leading-relaxed pointer-events-none">
-        <p>// REGISTRO</p>
-        <p>FILE: SUBSCRIBER</p>
-        <p>STATUS: OPEN</p>
-      </div>
-      <div className="absolute top-4 right-4 font-terminal text-[10px] text-amber/60 text-right leading-relaxed pointer-events-none">
-        <p>FORM: SUB-001</p>
-        <p>ACCESS: PUBLIC</p>
-        <p>REF: 04009c-003</p>
-      </div>
 
       {/* Contenido central */}
       <div className="flex-1 flex flex-col items-center justify-center gap-6 px-8 py-16 w-full max-w-sm">
@@ -88,7 +89,7 @@ export default function SubscribePage() {
           className="text-center flex flex-col gap-1"
         >
           <span className="font-brand text-3xl text-off-white tracking-widest">04009c</span>
-          <span className="data-label">// SOLICITUD DE ACCESO</span>
+          <span className="font-terminal text-[0.65rem] tracking-[0.12em] uppercase text-brand-red">{"// SOLICITUD DE ACCESO"}</span>
         </motion.div>
 
         <AnimatePresence mode="wait">
@@ -99,8 +100,8 @@ export default function SubscribePage() {
               animate={{ opacity: 1, y: 0 }}
               className="w-full flex flex-col items-center gap-4 text-center"
             >
-              <div className="scan-border px-6 py-5 flex flex-col gap-2">
-                <span className="font-terminal text-[11px] text-amber tracking-widest">// REGISTRO COMPLETADO</span>
+              <div className="border border-brand-red px-6 py-5 flex flex-col gap-2">
+                <span className="font-terminal text-[11px] text-brand-red tracking-widest">{"// REGISTRO COMPLETADO"}</span>
                 <p className="font-body text-sm text-off-white/80 leading-relaxed mt-1">
                   Tu solicitud ha sido recibida. Te contactaremos cuando tu acceso esté listo.
                 </p>
@@ -116,45 +117,33 @@ export default function SubscribePage() {
             <motion.form
               key="form"
               onSubmit={handleSubmit}
+              noValidate
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="w-full flex flex-col gap-3"
             >
               {FIELDS.map(({ key, label, type, placeholder, required }) => (
                 <div key={key} className="flex flex-col gap-1">
-                  <span className="data-label">{label}{required ? " *" : ""}</span>
+                  <span className="font-terminal text-[0.65rem] tracking-[0.12em] uppercase text-brand-red">{label}{required ? " *" : ""}</span>
                   <input
                     type={type}
                     value={(form as Record<string, string>)[key]}
                     onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.value }))}
                     placeholder={placeholder}
-                    required={required}
                     disabled={loading}
-                    className="w-full bg-transparent border border-off-white/30 text-off-white font-terminal text-sm px-4 py-2.5 placeholder:text-off-white/25 focus:outline-none focus:border-amber transition-colors disabled:opacity-50"
+                    className="w-full bg-transparent border border-off-white/30 text-off-white font-terminal text-sm px-4 py-2.5 placeholder:text-off-white/25 focus:outline-none focus:border-brand-red transition-colors disabled:opacity-50"
                   />
                 </div>
               ))}
 
               <button
                 type="submit"
-                disabled={loading || !form.name || !form.email}
-                className="w-full bg-off-white text-brand-blue font-terminal text-sm tracking-widest uppercase py-3 hover:bg-amber transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed mt-1"
+                disabled={loading}
+                className="w-full bg-off-white text-brand-blue font-terminal text-sm tracking-widest uppercase py-3 hover:bg-brand-red hover:text-off-white press disabled:opacity-40 disabled:cursor-not-allowed mt-1"
               >
                 {loading ? "ENVIANDO..." : "SOLICITAR ACCESO"}
               </button>
 
-              <AnimatePresence>
-                {error && (
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="font-terminal text-[11px] text-brand-red text-center tracking-wider"
-                  >
-                    {error}
-                  </motion.p>
-                )}
-              </AnimatePresence>
 
               <button
                 type="button"

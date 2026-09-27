@@ -23,7 +23,7 @@ export async function sendSubscriberConfirmation(to: string, name: string) {
     subject: "// SOLICITUD RECIBIDA — 04009c",
     html: `
       <div style="background:#04009c;padding:48px 32px;font-family:monospace;color:#E2E2E2;max-width:480px;margin:0 auto;">
-        <p style="font-size:11px;letter-spacing:0.2em;color:#F0A500;text-transform:uppercase;margin:0 0 24px;">// REGISTRO CONFIRMADO</p>
+        <p style="font-size:11px;letter-spacing:0.2em;color:#FF0000;text-transform:uppercase;margin:0 0 24px;">// REGISTRO CONFIRMADO</p>
         <h1 style="font-size:32px;color:#E2E2E2;letter-spacing:0.3em;margin:0 0 24px;">04009c</h1>
         <p style="font-size:14px;line-height:1.7;color:rgba(226,226,226,0.8);margin:0 0 16px;">
           Hola ${esc(name)},
@@ -53,7 +53,7 @@ export async function sendOwnerNotification(subscriber: {
     subject: "// NUEVO SUSCRIPTOR — 04009c",
     html: `
       <div style="background:#080808;padding:48px 32px;font-family:monospace;color:#E2E2E2;max-width:480px;margin:0 auto;">
-        <p style="font-size:11px;letter-spacing:0.2em;color:#F0A500;text-transform:uppercase;margin:0 0 24px;">// NUEVO SUSCRIPTOR</p>
+        <p style="font-size:11px;letter-spacing:0.2em;color:#FF0000;text-transform:uppercase;margin:0 0 24px;">// NUEVO SUSCRIPTOR</p>
         <table style="width:100%;border-collapse:collapse;">
           ${[
             ["NOMBRE", esc(subscriber.name)],
@@ -62,7 +62,7 @@ export async function sendOwnerNotification(subscriber: {
             ["CIUDAD", esc(subscriber.city   || "—")],
           ].map(([label, value]) => `
             <tr>
-              <td style="font-size:10px;letter-spacing:0.15em;color:#F0A500;text-transform:uppercase;padding:8px 0 4px;">${label}</td>
+              <td style="font-size:10px;letter-spacing:0.15em;color:#FF0000;text-transform:uppercase;padding:8px 0 4px;">${label}</td>
             </tr>
             <tr>
               <td style="font-size:13px;color:#E2E2E2;padding:0 0 16px;border-bottom:1px solid #2A2A2A;">${value}</td>
