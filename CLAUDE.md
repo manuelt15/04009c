@@ -3,15 +3,15 @@
 # 04009c — Moya Project
 
 ## Al iniciar cada sesión — leer SIEMPRE primero
-- `~/Desktop/moya/moya-memory/MEMORY.md`
-- `~/Desktop/moya/moya-memory/design-system.md`
-- `~/Desktop/moya/moya-memory/architecture.md`
-- `~/Desktop/moya/moya-memory/lessons.md`
+- `memory/MEMORY.md`
+- `memory/design-system.md`
+- `memory/architecture.md`
+- `memory/lessons.md`
 
 ## Al cerrar cada sesión
-1. Actualizar topic file relevante en `moya-memory/`
-2. Actualizar `moya-memory/lessons.md` con errores y fixes
-3. Actualizar `moya-memory/MEMORY.md` — estado actual y próximo paso
+1. Actualizar topic file relevante en `memory/`
+2. Actualizar `memory/lessons.md` con errores y fixes
+3. Actualizar `memory/MEMORY.md` — estado actual y próximo paso
 
 ## Stack
 - Next.js 16 + TypeScript
