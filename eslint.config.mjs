@@ -9,7 +9,8 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
-    "out/**",
+    // Código de autenticación aparcado: vuelve con better-auth, no se revisa
+        "out/**",
     "build/**",
     "next-env.d.ts",
   ]),
