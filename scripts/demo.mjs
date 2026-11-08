@@ -153,6 +153,19 @@ async function apagar() {
 process.on("SIGINT", apagar);
 process.on("SIGTERM", apagar);
 
+// Ejecuta un comando y espera a que termine. Rechaza si sale con error: una
+// compilación rota no puede pasar desapercibida detrás de un `spawn`.
+function ejecutar(binario, args, env) {
+  return new Promise((resolve, reject) => {
+    const p = spawn(binario, args, { cwd: RAIZ, stdio: "inherit", env });
+    p.on("exit", (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(`next ${args.join(" ")} terminó con código ${code}`));
+    });
+    p.on("error", reject);
+  });
+}
+
 async function main() {
   console.log("[demo] levantando Mongo en memoria…");
   mongo = await MongoMemoryServer.create({
@@ -164,18 +177,25 @@ async function main() {
   await sembrar(uri);
 
   const binario = path.join(RAIZ, "node_modules", ".bin", "next");
-  console.log(`[demo] arrancando Next en http://${HOST}:${PUERTO} …`);
+  const entorno = {
+    ...process.env,
+    MONGODB_URI: uri,
+    // Sin correo: la maqueta no envía emails.
+    MAIL_USER: "",
+    MAIL_PASS: "",
+  };
 
-  next = spawn(binario, ["dev", "-p", String(PUERTO), "-H", HOST], {
+  // `next dev` (Turbopack) no hidrata en este entorno: sirve la página pero React
+  // nunca engancha, y todo lo que anima se queda en opacidad 0. Compilada, va bien,
+  // así que la maqueta se compila y se sirve en modo producción.
+  console.log("[demo] compilando la maqueta (tarda un poco)…");
+  await ejecutar(binario, ["build"], entorno);
+
+  console.log(`[demo] arrancando Next en http://${HOST}:${PUERTO} …`);
+  next = spawn(binario, ["start", "-p", String(PUERTO), "-H", HOST], {
     cwd: RAIZ,
     stdio: "inherit",
-    env: {
-      ...process.env,
-      MONGODB_URI: uri,
-      // Sin correo: la maqueta no envía emails.
-      MAIL_USER: "",
-      MAIL_PASS: "",
-    },
+    env: entorno,
   });
 
   next.on("exit", (code) => {
