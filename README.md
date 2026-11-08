@@ -48,8 +48,8 @@ Si un cambio de estilos no aparece, para el servidor y borra `.next`: con el rep
 
 ```env
 MONGODB_URI=mongodb://localhost:27017/04009c
-JWT_SECRET_MEMBER=min-32-chars-secret
-JWT_SECRET_ADMIN=min-32-chars-secret
+JWT_SECRET_MEMBER=<genera uno con: openssl rand -base64 32>
+JWT_SECRET_ADMIN=<genera uno con: openssl rand -base64 32>
 MAIL_USER=
 MAIL_PASS=
 ```
