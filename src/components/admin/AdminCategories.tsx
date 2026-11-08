@@ -82,7 +82,7 @@ export default function AdminCategories() {
                 aria-label={`Bajar ${c.name}`} className="text-dim hover:text-off-white disabled:opacity-20 text-[10px] leading-none">▼</button>
             </span>
             {editing?.id === c._id ? (
-              <input autoFocus value={editing.name} onChange={(e) => setEditing({ id: c._id, name: e.target.value })}
+              <input aria-label={`Renombrar categoría ${c.name}`} autoFocus value={editing.name} onChange={(e) => setEditing({ id: c._id, name: e.target.value })}
                 onKeyDown={(e) => { if (e.key === "Enter") rename(); if (e.key === "Escape") setEditing(null); }}
                 className={`${INPUT} w-44 py-1`} />
             ) : (
@@ -109,7 +109,7 @@ export default function AdminCategories() {
       </ul>
 
       <form onSubmit={add} className="flex flex-wrap items-center gap-3">
-        <input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="NUEVA CATEGORÍA" className={`${INPUT} flex-1 min-w-40`} />
+        <input aria-label="Nueva categoría" value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="NUEVA CATEGORÍA" className={`${INPUT} flex-1 min-w-40`} />
         <AdminSelect value={newGuide} options={GUIDE_OPTIONS} onChange={(v) => setNewGuide(v as SizeGuideKind)} />
         <button type="submit" className="font-terminal text-[11px] tracking-widest uppercase px-4 py-2 border border-brand-red text-brand-red hover:bg-brand-red hover:text-off-white press">
           + AÑADIR
