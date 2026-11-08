@@ -34,6 +34,7 @@ export default function Checkout() {
   const router = useRouter();
   const toast = useToast();
   const [form, setForm] = useState(EMPTY_FORM);
+  const [errors, setErrors] = useState<Partial<Record<FieldKey, string>>>({});
   const [methods, setMethods] = useState<ShippingMethod[]>(DEFAULT_SHIPPING);
   const [shippingId, setShippingId] = useState<string>(DEFAULT_SHIPPING[0].id);
   const shipping = methods.find((m) => m.id === shippingId) ?? methods[0];
@@ -59,17 +60,21 @@ export default function Checkout() {
   function handlePay(e: React.FormEvent) {
     e.preventDefault();
 
-    const missing = FIELDS.filter((f) => f.required && !form[f.key].trim()).map((f) => f.label);
-    if (missing.length > 0) {
-      toast(`FALTAN DATOS: ${missing.join(", ")}`, "error");
-      return;
+    const nextErrors: Partial<Record<FieldKey, string>> = {};
+    for (const f of FIELDS) {
+      if (f.required && !form[f.key].trim()) nextErrors[f.key] = `${f.label}: CAMPO OBLIGATORIO`;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
-      toast("EL EMAIL NO ES VÁLIDO", "error");
-      return;
+    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      nextErrors.email = "EL EMAIL NO ES VÁLIDO";
     }
-    if (!/^\d{5}$/.test(form.postalCode.trim())) {
-      toast("EL CÓDIGO POSTAL DEBE TENER 5 DÍGITOS", "error");
+    if (form.postalCode.trim() && !/^\d{5}$/.test(form.postalCode.trim())) {
+      nextErrors.postalCode = "EL CÓDIGO POSTAL DEBE TENER 5 DÍGITOS";
+    }
+    setErrors(nextErrors);
+    const firstInvalid = FIELDS.find((f) => nextErrors[f.key]);
+    if (firstInvalid) {
+      toast("REVISA LOS CAMPOS MARCADOS", "error");
+      requestAnimationFrame(() => document.getElementById(`checkout-${firstInvalid.key}`)?.focus());
       return;
     }
 
@@ -110,12 +115,17 @@ export default function Checkout() {
                       {f.label}{f.required ? " *" : ""}
                     </span>
                     <input
+                      id={`checkout-${f.key}`}
+                      required={f.required}
+                      aria-invalid={Boolean(errors[f.key])}
+                      aria-describedby={errors[f.key] ? `checkout-${f.key}-error` : undefined}
                       type={f.type}
                       autoComplete={f.autoComplete}
                       value={form[f.key]}
                       onChange={(e) => setForm((p) => ({ ...p, [f.key]: e.target.value }))}
                       className={INPUT}
                     />
+                    {errors[f.key] && <span id={`checkout-${f.key}-error`} className="font-terminal text-xs text-off-white">{errors[f.key]}</span>}
                   </label>
                 ))}
                 <label className="flex flex-col gap-1 sm:col-span-2">

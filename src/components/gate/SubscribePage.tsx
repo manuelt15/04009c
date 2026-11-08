@@ -16,6 +16,7 @@ const FIELDS: { key: "name" | "email" | "mobile" | "city"; label: string; type: 
 export default function SubscribePage() {
   const router = useRouter();
   const [form, setForm]       = useState({ name: "", email: "", mobile: "", city: "" });
+  const [errors, setErrors] = useState<Partial<Record<keyof typeof form, string>>>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const toast = useToast();
@@ -32,13 +33,18 @@ export default function SubscribePage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const missing = FIELDS.filter((f) => f.required && !form[f.key].trim()).map((f) => f.label);
-    if (missing.length > 0) {
-      toast(`FALTAN DATOS: ${missing.join(" Y ")}`, "error");
-      return;
+    const nextErrors: Partial<Record<keyof typeof form, string>> = {};
+    for (const f of FIELDS) {
+      if (f.required && !form[f.key].trim()) nextErrors[f.key] = `${f.label}: CAMPO OBLIGATORIO`;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
-      toast("EL EMAIL NO ES VÁLIDO", "error");
+    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      nextErrors.email = "EL EMAIL NO ES VÁLIDO";
+    }
+    setErrors(nextErrors);
+    const firstInvalid = FIELDS.find((f) => nextErrors[f.key]);
+    if (firstInvalid) {
+      toast("REVISA LOS CAMPOS MARCADOS", "error");
+      requestAnimationFrame(() => document.getElementById(`subscribe-${firstInvalid.key}`)?.focus());
       return;
     }
 
@@ -126,6 +132,9 @@ export default function SubscribePage() {
                 <div key={key} className="flex flex-col gap-1">
                   <span className="font-terminal text-[0.65rem] tracking-[0.12em] uppercase text-brand-red">{label}{required ? " *" : ""}</span>
                   <input
+                    id={`subscribe-${key}`}
+                    aria-invalid={Boolean(errors[key])}
+                    aria-describedby={errors[key] ? `subscribe-${key}-error` : undefined}
                     type={type}
                     value={(form as Record<string, string>)[key]}
                     onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.value }))}
@@ -133,6 +142,7 @@ export default function SubscribePage() {
                     disabled={loading}
                     className="w-full bg-transparent border border-off-white/30 text-off-white font-terminal text-sm px-4 py-2.5 placeholder:text-off-white/25 focus:outline-none focus:border-brand-red transition-colors disabled:opacity-50"
                   />
+                  {errors[key] && <span id={`subscribe-${key}-error`} className="font-terminal text-xs text-off-white">{errors[key]}</span>}
                 </div>
               ))}
 
