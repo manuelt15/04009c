@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { ISubscriber } from "@/lib/models/subscriber";
+import { filasACSV } from "@/lib/csv";
 
 export default function AdminSubscribers() {
   const [subscribers, setSubscribers] = useState<ISubscriber[]>([]);
@@ -11,11 +12,18 @@ export default function AdminSubscribers() {
   }, []);
 
   function exportCSV() {
-    const header = "Nombre,Email,Móvil,Ciudad,Fecha";
-    const rows = subscribers.map((s) =>
-      `${s.name},${s.email},${s.mobile},${s.city},${new Date(s.createdAt).toLocaleDateString("es-ES")}`
+    // Las celdas pasan por celdaCSV: un nombre que empiece por = + - @ se
+    // ejecutaría como fórmula al abrir el fichero en una hoja de cálculo.
+    const csv = filasACSV(
+      ["Nombre", "Email", "Móvil", "Ciudad", "Fecha"],
+      subscribers.map((s) => [
+        s.name,
+        s.email,
+        s.mobile,
+        s.city,
+        new Date(s.createdAt).toLocaleDateString("es-ES"),
+      ])
     );
-    const csv = [header, ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
