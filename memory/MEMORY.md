@@ -3,6 +3,7 @@
 Fuente de verdad del proyecto. Leer al iniciar cada sesión.
 
 ## Índice
+- [Autenticación aparcada (2026-11-08)](auth-aparcada.md) — la web es pública; la sesión (member_token/admin_token) queda aparcada en `legacy/auth/` y vuelve con better-auth.
 - [Cierre local de hallazgos 2026-11-08](handovers-archive/HANDOVER-2026-11-08-cierre-hallazgos-local.md) — 35 cierres, 3 residuales; tsc/tests verdes, lint previo y build offline bloqueado; SIN PUSH.
 - [Estado de remediación](security-remediation.md) — tokens, accesibilidad, dependencias y límites de login.
 - [Handover 2026-09-27](handovers-archive/HANDOVER-2026-09-27-pulido-tienda-carrito-y-panel.md) — pulido completo: tema del sistema, carrito y checkout con aviso de Stripe, tallas con stock, panel con categorías, envíos y medidas editables; todo en producción.
@@ -12,7 +13,17 @@ Fuente de verdad del proyecto. Leer al iniciar cada sesión.
 - [[lessons]] — Errores encontrados y sus fixes
 - `DESIGN.md` en el repo — referencia visual completa medida sobre el código (2026-09-27)
 
-## Estado local — 2026-11-08
+## Estado local — 2026-11-08 (demo pública)
+
+- La web es **pública, sin clave**: portada con número pulsable → ACCEDER → `/store`.
+- Panel `/admin` = vista de prueba de solo lectura con datos inventados (`src/lib/demo-data.ts`); banner fijo en todas las pantallas; `/api/admin/*` solo `GET`, el resto `405`.
+- Checkout de ejemplo: carrito de ejemplo, «Pago con Stripe — próximamente», sin escribir pedidos.
+- Sesión aparcada en `legacy/auth/` (fuera de `src/`, no compila). Vuelve con better-auth.
+- `JWT_SECRET_MEMBER` y `JWT_SECRET_ADMIN` sin uso desde 2026-11.
+- **Maqueta sin secretos**: `npm run demo` levanta un Mongo en memoria, siembra `src/lib/demo-data.ts` y arranca Next en 3006. `mongodb-memory-server` es devDependency; el binario no se commitea. Sin fallback en producción: sin `MONGODB_URI` la app falla.
+- Verificación de esta tanda: tsc, tests y build con salida real; servidor local en el puerto 3006, parado al terminar. SIN PUSH.
+
+## Estado local — 2026-11-08 (tanda anterior)
 
 - Remediación de 35 hallazgos registrada; abiertos ALTA 2026-11-08-001 y BAJA 042/044.
 - Sin push ni despliegue. tsc y 23 tests verdes; lint previo (20 errores/2 avisos); build bloqueado por fuentes remotas en modo offline.
@@ -30,14 +41,14 @@ Fuente de verdad del proyecto. Leer al iniciar cada sesión.
 - **Decidido 2026-09-27:** se pule esta tienda y ya. Descartado convertirla en plataforma multi-tienda o plantilla.
 
 ## Todo construido y funcionando
-- Entrada `/` con código, audio, esquinas (coordenadas de LA, ADMINISTRADOR → login, BLOQUEADA)
+- Entrada `/` con audio, esquinas (coordenadas de LA, ADMINISTRADOR → panel) y número pulsable
 - About y Solicitar acceso en español, sin esquinas, con validación y avisos
 - Tema que sigue al sistema (azul/negro) con selector AUTO / AZUL / NEGRO
 - Tienda: cabecera con carrito y menú móvil, pie, categorías desde BD, TODO/NUEVOS automáticas, NUEVO en card
 - Ficha: tallas con stock, guía de medidas, cantidad; carrito lateral (localStorage); checkout con modal de Stripe
 - Panel: barra lateral fija con iconos, stock por talla, slug/REF automáticos, pedidos con detalle e historial, AJUSTES (categorías, envíos, medidas, código, credenciales)
 - Avisos propios (Toaster), animaciones revisadas, dvh y 16 px en campos móviles
-- `/api/products` exige sesión de miembro
+- `/api/products` es público (la sesión de miembro quedó aparcada)
 
 ## Credenciales locales (NO subir a git)
 - Gate: `123456`
@@ -62,11 +73,12 @@ Fuente de verdad del proyecto. Leer al iniciar cada sesión.
 - Next.js 16 — proxy.ts (no middleware.ts), params son Promise en rutas dinámicas
 - Tailwind v4 — tokens en globals.css con @theme inline, NO tailwind.config.js
 - Passwords bcrypt cost 12 — gate, admin login y settings
-- requireAdmin() en TODAS las rutas /api/admin/* (defense in depth)
+- /api/admin/* solo admite GET y devuelve datos de ejemplo; el resto de métodos, 405
 - Emails NO bloquean el registro — Promise.all con .catch(() => {})
 - HTML escapado en templates de email con helper esc()
 - View Transitions con `view-transition-class: product` en card y ficha
 - Categorías y ajustes de tienda en BD, sembrados solos con valores iniciales (`lib/store-config.ts`)
+- Datos de ejemplo del panel en `src/lib/demo-data.ts` (inventados, dominio de ejemplo)
 - Producto sin `sizes` = sin control de stock (todas las tallas); agotado = manual o todas a 0 (`lib/stock.ts`)
 - Carrito solo en el navegador; precios a recalcular en servidor cuando llegue Stripe
 - Sin dependencias nuevas: avisos, carrito y modales hechos a mano

@@ -1,6 +1,13 @@
 # 04009c · The House of Access
 
-Tienda de ropa exclusiva con acceso por código, catálogo con tallas y stock, carrito, checkout y panel de administración.
+Tienda de ropa exclusiva: catálogo con tallas y stock, carrito, checkout y panel de administración.
+
+**La web es pública: ya no pide clave de acceso.** Se enseña como maqueta completa:
+el catálogo es real, el panel es una vista de prueba de solo lectura con datos de
+ejemplo y el checkout muestra el pago con Stripe como «próximamente».
+
+La autenticación (acceso de miembro y de administrador) vuelve con **better-auth**.
+Mientras tanto, el código de la sesión está aparcado en `legacy/auth/`.
 
 En producción: [04009c.vercel.app](https://04009c.vercel.app)
 
@@ -17,7 +24,8 @@ En producción: [04009c.vercel.app](https://04009c.vercel.app)
 | Estilos | Tailwind CSS v4 (tokens en `globals.css`) |
 | Animaciones | Framer Motion + View Transitions API |
 | Base de datos | MongoDB + Mongoose (Atlas en producción) |
-| Auth | JWT (jose) en cookies httpOnly + bcrypt |
+| Auth | Ninguna por ahora (JWT aparcado en `legacy/auth/`, vuelve con better-auth) |
+| Hash de contraseñas | bcryptjs: sin uso en la app, solo en el código aparcado |
 | Gráficas | Recharts |
 | Tema | next-themes (sigue al sistema) |
 | Emails | Nodemailer |
@@ -26,6 +34,23 @@ En producción: [04009c.vercel.app](https://04009c.vercel.app)
 ---
 
 ## Arrancar en local
+
+### La maqueta (sin secretos, sin Atlas)
+
+```bash
+npm install
+npm run demo
+```
+
+Levanta un Mongo **en memoria**, siembra los datos de ejemplo y arranca Next en
+`http://0.0.0.0:3006`. No hace falta `.env.local`, ni Atlas, ni ninguna clave.
+Al cerrar (Ctrl+C) se paran el servidor y el Mongo.
+
+El Mongo en memoria es una **devDependency** (`mongodb-memory-server`): nunca va
+a producción. El binario que descarga se queda en la caché de `node_modules`
+y no se commitea.
+
+### Con tu propia base de datos
 
 ```bash
 npm install
@@ -48,41 +73,62 @@ Si un cambio de estilos no aparece, para el servidor y borra `.next`: con el rep
 
 ```env
 MONGODB_URI=mongodb://localhost:27017/04009c
-JWT_SECRET_MEMBER=<genera uno con: openssl rand -base64 32>
-JWT_SECRET_ADMIN=<genera uno con: openssl rand -base64 32>
 MAIL_USER=
 MAIL_PASS=
+```
+
+Las que hacen falta ahora mismo son `MONGODB_URI` (la base de datos) y, si se quiere
+enviar correos, `MAIL_USER` y `MAIL_PASS`. Sin correo, la web funciona igual.
+
+**Sin `MONGODB_URI` la app falla al arrancar**, y es lo correcto: si producción
+se quedara sin base de datos y saltyera con datos falsos, sería peor que un error.
+Los datos de ejemplo entran solo por `npm run demo`.
+
+### Variables sin uso desde 2026-11
+
+Estas dos siguen en el `.env.local` de producción, pero **la web ya no las usa**:
+la clave de acceso y el login del panel están aparcados. Volverán con better-auth.
+
+```env
+JWT_SECRET_MEMBER=<sin uso desde 2026-11; vuelve con better-auth>
+JWT_SECRET_ADMIN=<sin uso desde 2026-11; vuelve con better-auth>
 ```
 
 ---
 
 ## Zonas de la app
 
-### Entrada `/`
-- Código de acceso hasheado (bcrypt) en MongoDB
+### Entrada `/` (pública)
 - Audio ambiente en bucle con botón de silencio
-- Caballo → `/about` · ADMINISTRADOR (esquina) → login del panel
-- Avisos si el código está vacío o es incorrecto
+- Caballo → `/about` · ADMINISTRADOR (esquina) → panel de prueba
+- El número `04009c` es el control de entrada: al pulsarlo aparece el botón **ACCEDER** → `/store`
+- Sin clave, sin cookie y sin llamada a la API
 
 ### About `/about` y Solicitar acceso `/subscribe`
 - Manifiesto de la marca
 - Formulario de solicitud con validación y email de confirmación
 
-### Tienda `/store` (sesión de miembro)
+### Tienda `/store` (pública)
 - Cabecera: caballo → about, `04009c` → inicio, modos AUTO / AZUL / NEGRO, carrito, administrador. En móvil, menú lateral
 - Categorías gestionables desde el panel. TODO y NUEVOS son automáticas (NUEVOS = creados en los últimos 30 días, con etiqueta en la card)
 - Fotos con tratamiento común (encuadre, fondo claro, blanco y negro) y segunda foto en hover
 - Ficha: tallas S a XL (o talla única) con stock, guía de medidas, cantidad limitada por stock
 - Carrito lateral guardado en el navegador, sin superar el stock de cada talla
-- Checkout `/store/checkout` con datos de envío, método de envío y resumen. El pago muestra un aviso: se activará al conectar Stripe
+- Checkout `/store/checkout` con datos de envío, método de envío y resumen. Si el carrito está vacío se enseña un carrito de ejemplo. El pago muestra «Pago con Stripe — próximamente» y no guarda ningún pedido
 - Pie con ayuda, legal (páginas pendientes de contenido), redes y cierre de sesión
 
-### Panel `/admin` (sesión de administrador)
+### Panel `/admin` (vista de prueba, sin contraseña)
+Entra directo, sin login. Todos los datos son **inventados** (`src/lib/demo-data.ts`):
+correos con dominio de ejemplo, nombres y direcciones ficticios. Así se ve la idea
+completa del panel sin exponer datos reales de clientes.
+
+- Banner fijo en todas las pantallas: «Vista de prueba — datos de ejemplo, no se puede modificar nada»
 - **Resumen:** métricas y gráficas (ingresos por mes, pedidos por estado, productos por categoría, últimos suscriptores)
-- **Productos:** alta con slug y referencia automáticos, stock por talla, miniatura, etiqueta NUEVO y confirmación al borrar. Subida directa de fotos preparada pero desactivada
-- **Pedidos:** detalle desplegable con artículos, talla, datos de envío e historial de estados
+- **Productos:** listado con stock por talla, miniatura y etiqueta NUEVO (sin alta, sin edición, sin borrado)
+- **Pedidos:** detalle desplegable con artículos, talla, datos de envío e historial de estados (el estado no se puede cambiar)
 - **Suscriptores:** tabla y exportación a CSV
-- **Ajustes:** categorías (crear, renombrar, ordenar, guía de medidas), métodos y precios de envío, tablas de medidas, código de acceso y credenciales del administrador
+- **Ajustes:** categorías, métodos y precios de envío y tablas de medidas, todo en lectura
+- Bloqueo de escrituras en los dos lados: en cliente no hay botones de añadir, editar, borrar ni guardar; en servidor `/api/admin/*` solo admite `GET` y el resto responde `405`
 - Barra lateral fija en escritorio, menú lateral en móvil
 
 ---
@@ -92,25 +138,30 @@ MAIL_PASS=
 ```
 src/
 ├── app/
-│   ├── page.tsx                  → Entrada con código de acceso
+│   ├── page.tsx                  → Portada pública (número → ACCEDER → /store)
 │   ├── about/  subscribe/
-│   ├── store/                    → Catálogo (JWT miembro)
+│   ├── store/                    → Catálogo (público)
 │   │   ├── [slug]/               → Ficha de producto
-│   │   └── checkout/
-│   ├── admin/                    → Panel (JWT admin): login, products, orders, subscribers, settings
+│   │   └── checkout/             → Checkout de ejemplo, pago Stripe «próximamente»
+│   ├── admin/                    → Panel de prueba: products, orders, subscribers, settings
 │   └── api/
-│       ├── auth/                 → login, logout, admin-login, admin-logout
-│       ├── products/             → catálogo (JWT miembro)
+│       ├── products/             → catálogo (público)
 │       ├── categories/  store-settings/   → lectura pública (sin datos sensibles)
-│       └── admin/                → stats, products, orders, subscribers, settings, categories, store-settings
+│       └── admin/                → solo GET con datos de ejemplo; el resto, 405
 ├── components/
 │   ├── gate/  store/  store/cart/  store/checkout/  admin/  admin/charts/  shared/
 ├── lib/
-│   ├── auth/  db/  models/       → product, order, category, store-settings, subscriber, admin, login
+│   ├── auth/  db/  models/       → jwt, rate-limit, session-version; product, order, category, store-settings, subscriber, admin, login
 │   ├── cart-store.ts             → carrito (localStorage)
+│   ├── demo-data.ts              → datos INVENTADOS del panel de prueba
 │   ├── stock.ts  size-guide.ts  shipping.ts  new-products.ts
 │   └── store-config.ts           → categorías y ajustes, con valores iniciales si no existen
-└── proxy.ts                      → protección de /store, /api/products, /admin y /api/admin
+├── proxy.ts                      → hoy no bloquea nada; aquí vuelve better-auth
+├── demo-data.ts                  → datos INVENTADOS (panel de prueba y siembra de la demo)
+└── legacy/auth/                  → sesión aparcada (login, guards, AdminLogin): vuelve con better-auth
+
+scripts/
+└── demo.mjs                      → npm run demo: Mongo en memoria + siembra + Next en 3006
 ```
 
 ---
@@ -138,8 +189,10 @@ Referencia completa en [`DESIGN.md`](DESIGN.md).
 ## Pendiente
 
 - [ ] Stripe: pagos reales y creación de pedidos (el modelo de pedido ya guarda talla, envío e historial)
+- [ ] Publicar la maqueta (hoy `npm run demo` solo funciona en local)
+- [ ] Autenticación con better-auth: recuperar de `legacy/auth/` la clave de acceso y el login del panel
 - [ ] Subida de fotos (Cloudinary o Vercel Blob): el botón está en el panel, desactivado
 - [ ] Fotos propias de la marca: las actuales son de prueba
 - [ ] Textos de envíos, devoluciones, guía de tallas y legales
-- [ ] Medidas y precios de envío reales (se editan en Ajustes)
+- [ ] Medidas y precios de envío reales (ahora solo lectura en el panel de prueba)
 - [ ] Dominio propio
