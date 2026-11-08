@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useFocusTrap } from "@/lib/a11y/useFocusTrap";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 
 // Sustituye a window.confirm() con el estilo del panel
 export default function ConfirmDialog({ open, title, detail, confirmLabel = "ELIMINAR", onConfirm, onCancel }: Props) {
+  const dialogRef = useFocusTrap<HTMLDivElement>(open, '[data-safe-action]');
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onCancel();
@@ -35,6 +37,8 @@ export default function ConfirmDialog({ open, title, detail, confirmLabel = "ELI
           />
           <motion.div
             role="alertdialog"
+            ref={dialogRef}
+            tabIndex={-1}
             aria-modal="true"
             aria-labelledby="confirm-title"
             className="relative w-full max-w-sm bg-[var(--theme-bg)] border border-brand-red p-6 flex flex-col gap-4"
@@ -50,13 +54,13 @@ export default function ConfirmDialog({ open, title, detail, confirmLabel = "ELI
             <div className="flex gap-3 mt-2">
               <button
                 onClick={onConfirm}
-                autoFocus
                 className="font-terminal text-[11px] tracking-widest uppercase px-4 py-2 bg-brand-red text-off-white hover:bg-off-white hover:text-black press"
               >
                 {confirmLabel}
               </button>
               <button
                 onClick={onCancel}
+                data-safe-action
                 className="font-terminal text-[11px] tracking-widest uppercase px-4 py-2 border border-border text-dim hover:text-off-white press"
               >
                 CANCELAR
