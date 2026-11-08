@@ -2,14 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useFocusTrap } from "@/lib/a11y/useFocusTrap";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
 
 // Menú de móvil: se abre desde la derecha con los modos y el acceso al panel
 export default function MobileMenu() {
   const router = useRouter();
-  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const dialogRef = useFocusTrap<HTMLElement>(open);
 
@@ -22,7 +21,7 @@ export default function MobileMenu() {
 
   function goToAdmin() {
     setOpen(false);
-    router.push(`/admin/login?from=${encodeURIComponent(pathname)}`);
+    router.push("/admin");
   }
 
   return (

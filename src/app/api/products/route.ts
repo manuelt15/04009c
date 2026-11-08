@@ -2,12 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoose";
 import { Product } from "@/lib/models/product";
 import { NEW_WINDOW_MS } from "@/lib/new-products";
-import { requireMemberSession } from "@/lib/auth/member-guard";
 
+// La web es pública: el catálogo ya no pide sesión de miembro.
+// La autenticación vuelve con better-auth.
 export async function GET(req: NextRequest) {
-  const denied = await requireMemberSession(req);
-  if (denied) return denied;
-
   try {
     await connectDB();
 
@@ -21,6 +19,7 @@ export async function GET(req: NextRequest) {
         : category && category !== "TODO"
           ? { category }
           : {};
+
     const products = await Product.find(query).sort({ createdAt: -1 }).lean();
 
     return NextResponse.json({ products });

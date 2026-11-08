@@ -1,14 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
 import CartButton from "@/components/store/cart/CartButton";
 import MobileMenu from "@/components/store/MobileMenu";
 
 export default function StoreHeader() {
   const router = useRouter();
-  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-50 bg-[var(--theme-bg)] border-b border-border flex items-center justify-between px-6 py-3 transition-colors duration-300">
@@ -31,7 +30,7 @@ export default function StoreHeader() {
         <ThemeSwitcher />
         <CartButton />
         <button
-          onClick={() => router.push(`/admin/login?from=${encodeURIComponent(pathname)}`)}
+          onClick={() => router.push("/admin")}
           className="font-terminal text-[10px] text-dim hover:text-brand-red tracking-widest uppercase transition-colors"
         >
           ADMINISTRADOR

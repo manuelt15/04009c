@@ -14,11 +14,6 @@ const LEGAL = ["AVISO LEGAL", "POLÍTICA DE PRIVACIDAD", "POLÍTICA DE COOKIES",
 export default function StoreFooter() {
   const router = useRouter();
 
-  async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/");
-  }
-
   return (
     <footer className="border-t border-border px-6 pt-12 pb-6 transition-colors duration-300">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
@@ -75,10 +70,10 @@ export default function StoreFooter() {
           © {new Date().getFullYear()} <span className="normal-case">04009c</span>. Todos los derechos reservados.
         </span>
         <button
-          onClick={handleLogout}
+          onClick={() => router.push("/")}
           className="font-terminal text-[10px] text-dim hover:text-brand-red tracking-widest uppercase transition-colors"
         >
-          CERRAR SESIÓN
+          VOLVER A LA PORTADA
         </button>
       </div>
     </footer>

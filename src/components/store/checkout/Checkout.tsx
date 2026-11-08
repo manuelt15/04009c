@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useCart, cartSubtotal, formatPrice } from "@/lib/cart-store";
+import { useCart, cartSubtotal, formatPrice, type CartItem } from "@/lib/cart-store";
+import { DEMO_CART } from "@/lib/demo-data";
 import { DEFAULT_SHIPPING, type ShippingMethod } from "@/lib/shipping";
-import { useToast } from "@/components/shared/Toaster";
 import StripeNotice from "./StripeNotice";
 
 const LABEL = "font-terminal text-[0.65rem] tracking-[0.12em] uppercase text-brand-red";
@@ -25,18 +25,26 @@ const FIELDS: { key: FieldKey; label: string; type: string; autoComplete: string
   { key: "province",   label: "PROVINCIA",          type: "text",  autoComplete: "address-level1", required: true, wide: true },
 ];
 
-const EMPTY_FORM: Record<FieldKey, string> = {
-  email: "", phone: "", firstName: "", lastName: "", address: "", city: "", postalCode: "", province: "",
+// Datos de ejemplo: el checkout es una maqueta, no cobra ni guarda nada.
+const DEMO_FORM: Record<FieldKey, string> = {
+  email: "ana.ejemplo@example.com",
+  phone: "+34 600 000 001",
+  firstName: "Ana",
+  lastName: "Ejemplo",
+  address: "Calle de Ejemplo 12, 3º B",
+  city: "Madrid",
+  postalCode: "28013",
+  province: "Madrid",
 };
 
 export default function Checkout() {
-  const items = useCart();
+  const cart = useCart();
   const router = useRouter();
-  const toast = useToast();
-  const [form, setForm] = useState(EMPTY_FORM);
-  const [errors, setErrors] = useState<Partial<Record<FieldKey, string>>>({});
+  const [form, setForm] = useState<Record<FieldKey, string>>(DEMO_FORM);
   const [methods, setMethods] = useState<ShippingMethod[]>(DEFAULT_SHIPPING);
   const [shippingId, setShippingId] = useState<string>(DEFAULT_SHIPPING[0].id);
+  const [notice, setNotice] = useState(false);
+  const closeNotice = useCallback(() => setNotice(false), []);
   const shipping = methods.find((m) => m.id === shippingId) ?? methods[0];
 
   // Métodos y precios de envío editables en el panel → AJUSTES
@@ -51,49 +59,14 @@ export default function Checkout() {
       })
       .catch(() => {});
   }, []);
-  const [notice, setNotice] = useState(false);
-  const closeNotice = useCallback(() => setNotice(false), []);
+
+  // Sin productos en el carrito se enseña un carrito de ejemplo: la maqueta
+  // tiene que verse completa aunque nadie haya añadido nada.
+  const items: CartItem[] = cart.length > 0 ? cart : (DEMO_CART as CartItem[]);
+  const esEjemplo = cart.length === 0;
 
   const subtotal = cartSubtotal(items);
   const total = subtotal + shipping.price;
-
-  function handlePay(e: React.FormEvent) {
-    e.preventDefault();
-
-    const nextErrors: Partial<Record<FieldKey, string>> = {};
-    for (const f of FIELDS) {
-      if (f.required && !form[f.key].trim()) nextErrors[f.key] = `${f.label}: CAMPO OBLIGATORIO`;
-    }
-    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
-      nextErrors.email = "EL EMAIL NO ES VÁLIDO";
-    }
-    if (form.postalCode.trim() && !/^\d{5}$/.test(form.postalCode.trim())) {
-      nextErrors.postalCode = "EL CÓDIGO POSTAL DEBE TENER 5 DÍGITOS";
-    }
-    setErrors(nextErrors);
-    const firstInvalid = FIELDS.find((f) => nextErrors[f.key]);
-    if (firstInvalid) {
-      toast("REVISA LOS CAMPOS MARCADOS", "error");
-      requestAnimationFrame(() => document.getElementById(`checkout-${firstInvalid.key}`)?.focus());
-      return;
-    }
-
-    setNotice(true);
-  }
-
-  if (items.length === 0) {
-    return (
-      <section className="flex-1 flex flex-col items-center justify-center gap-4 px-6 py-32 text-center">
-        <span className="font-terminal text-[11px] text-dim tracking-widest">{"// CARRITO VACÍO"}</span>
-        <button
-          onClick={() => router.push("/store")}
-          className="font-terminal text-[11px] text-off-white hover:text-brand-red tracking-widest uppercase transition-colors underline underline-offset-4"
-        >
-          VOLVER A LA TIENDA
-        </button>
-      </section>
-    );
-  }
 
   return (
     <section className="flex-1 px-6 py-10 lg:py-14">
@@ -103,7 +76,18 @@ export default function Checkout() {
           <h1 className="font-display text-4xl text-off-white tracking-wider uppercase leading-tight">Finalizar pedido</h1>
         </div>
 
-        <form onSubmit={handlePay} noValidate className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10">
+        {esEjemplo && (
+          <div className="border border-brand-red px-4 py-3 flex flex-col gap-1">
+            <span className="font-terminal text-[11px] tracking-widest uppercase text-brand-red">
+              {"// CHECKOUT DE EJEMPLO"}
+            </span>
+            <span className="font-terminal text-[10px] text-dim leading-relaxed">
+              Este carrito lleva productos de ejemplo. El pago todavía no está activo y no se guarda ningún pedido.
+            </span>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10">
           {/* Datos */}
           <div className="flex flex-col gap-8">
             <fieldset className="flex flex-col gap-4">
@@ -116,16 +100,13 @@ export default function Checkout() {
                     </span>
                     <input
                       id={`checkout-${f.key}`}
-                      required={f.required}
-                      aria-invalid={Boolean(errors[f.key])}
-                      aria-describedby={errors[f.key] ? `checkout-${f.key}-error` : undefined}
+                      name={f.key}
                       type={f.type}
                       autoComplete={f.autoComplete}
                       value={form[f.key]}
                       onChange={(e) => setForm((p) => ({ ...p, [f.key]: e.target.value }))}
                       className={INPUT}
                     />
-                    {errors[f.key] && <span id={`checkout-${f.key}-error`} className="font-terminal text-xs text-off-white">{errors[f.key]}</span>}
                   </label>
                 ))}
                 <label className="flex flex-col gap-1 sm:col-span-2">
@@ -164,9 +145,18 @@ export default function Checkout() {
 
             <fieldset className="flex flex-col gap-3">
               <legend className={`${LABEL} mb-4`}>PAGO</legend>
-              <div className="border border-border px-4 py-4 flex items-center justify-between gap-4">
-                <span className="font-terminal text-[11px] text-dim tracking-widest uppercase">Tarjeta de crédito o débito</span>
-                <Image src="/stripe-wordmark-white.svg" alt="Stripe" width={52} height={22} className="opacity-70" />
+              <div className="border border-border px-4 py-4 flex flex-col gap-3">
+                <div className="flex items-center justify-between gap-4">
+                  <span className="font-terminal text-[11px] text-dim tracking-widest uppercase">
+                    Pago con Stripe — próximamente
+                  </span>
+                  {/* Wordmark oficial de Stripe */}
+                  <Image src="/stripe-wordmark-white.svg" alt="Stripe" width={52} height={22} className="opacity-70" />
+                </div>
+                <p className="font-terminal text-[10px] text-dim leading-relaxed">
+                  Cuando se active el pago con Stripe se podrá pagar con tarjeta en esta misma página.
+                  Hasta entonces no se cobra nada ni se guarda ningún pedido.
+                </p>
               </div>
             </fieldset>
           </div>
@@ -198,16 +188,24 @@ export default function Checkout() {
               </div>
               <span className="text-[10px] text-dim tracking-wider">IVA INCLUIDO</span>
             </div>
-            <div className="px-5 pb-5">
+            <div className="px-5 pb-5 flex flex-col gap-2">
               <button
-                type="submit"
+                type="button"
+                onClick={() => setNotice(true)}
                 className="w-full bg-off-white text-black font-terminal text-sm tracking-widest uppercase py-4 hover:bg-brand-red hover:text-off-white press"
               >
                 PAGAR {formatPrice(total)}
               </button>
+              <button
+                type="button"
+                onClick={() => router.push("/store")}
+                className="w-full font-terminal text-[10px] text-dim hover:text-off-white tracking-widest uppercase py-2"
+              >
+                VOLVER A LA TIENDA
+              </button>
             </div>
           </aside>
-        </form>
+        </div>
       </div>
 
       <StripeNotice open={notice} onClose={closeNotice} />
