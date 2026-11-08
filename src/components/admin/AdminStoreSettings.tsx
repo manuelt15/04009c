@@ -69,9 +69,9 @@ export default function AdminStoreSettings() {
         <div className="flex flex-col gap-3">
           {shipping.map((m, i) => (
             <div key={m.id + i} className="grid grid-cols-1 sm:grid-cols-[1fr_1.4fr_110px_auto] gap-2 items-center">
-              <input value={m.label} onChange={(e) => editMethod(i, { label: e.target.value.toUpperCase() })} placeholder="NOMBRE" className={INPUT} aria-label="Nombre del envío" />
-              <input value={m.detail} onChange={(e) => editMethod(i, { detail: e.target.value.toUpperCase() })} placeholder="PLAZO" className={INPUT} aria-label="Plazo" />
-              <input type="number" min={0} step="0.01" value={m.price} onChange={(e) => editMethod(i, { price: Number(e.target.value) })} className={INPUT} aria-label="Precio" />
+              <input value={m.label} onChange={(e) => editMethod(i, { label: e.target.value.toUpperCase() })} placeholder="NOMBRE" className={INPUT} aria-label={`Nombre del envío ${m.label || m.id}`} />
+              <input value={m.detail} onChange={(e) => editMethod(i, { detail: e.target.value.toUpperCase() })} placeholder="PLAZO" className={INPUT} aria-label={`Plazo del envío ${m.label || m.id}`} />
+              <input type="number" min={0} step="0.01" value={m.price} onChange={(e) => editMethod(i, { price: Number(e.target.value) })} className={INPUT} aria-label={`Precio del envío ${m.label || m.id}`} />
               <button onClick={() => setShipping((l) => l.filter((_, j) => j !== i))} disabled={shipping.length <= 1}
                 className="font-terminal text-[10px] text-dim hover:text-brand-red disabled:opacity-30 px-2">QUITAR</button>
             </div>
@@ -104,7 +104,7 @@ export default function AdminStoreSettings() {
                       {[0, 1].map((col) => (
                         <th key={col} className="pr-2 pb-2">
                           <input value={guides[kind].columns[col]} onChange={(e) => editColumn(kind, col as 0 | 1, e.target.value)}
-                            className={`${INPUT} w-full py-1 text-[11px]`} aria-label={`Columna ${col + 1}`} />
+                            className={`${INPUT} w-full py-1 text-[11px]`} aria-label={`${GUIDE_TITLES[kind]}: columna ${col + 1}`} />
                         </th>
                       ))}
                     </tr>
@@ -117,7 +117,7 @@ export default function AdminStoreSettings() {
                           <td key={col} className="pr-2 py-1">
                             <input type="number" min={1} value={guides[kind].rows[s][col]}
                               onChange={(e) => editCell(kind, s, col as 0 | 1, Number(e.target.value))}
-                              className={`${INPUT} w-full py-1`} aria-label={`${s} ${guides[kind].columns[col]}`} />
+                              className={`${INPUT} w-full py-1`} aria-label={`${GUIDE_TITLES[kind]}: talla ${s}, ${guides[kind].columns[col]}`} />
                           </td>
                         ))}
                       </tr>
