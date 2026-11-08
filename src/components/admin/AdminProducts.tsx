@@ -182,6 +182,7 @@ export default function AdminProducts() {
             <div className="flex flex-col gap-1">
               <span className="data-label">CATEGORÍA</span>
               <AdminSelect
+                label="Categoría del producto"
                 value={form.category ?? ""}
                 options={categories.map((c) => ({ value: c.name, label: c.name }))}
                 onChange={setCategory}
