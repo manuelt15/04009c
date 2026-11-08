@@ -6,10 +6,12 @@ export const metadata = { title: "Tienda | 04009c" };
 
 export default function StorePage() {
   return (
-    <main className="min-h-dvh flex flex-col" style={{ backgroundColor: "var(--theme-bg)" }}>
+    <div className="min-h-dvh flex flex-col" style={{ backgroundColor: "var(--theme-bg)" }}>
       <StoreHeader />
-      <ProductGrid />
+      <main className="flex-1 flex flex-col">
+        <ProductGrid />
+      </main>
       <StoreFooter />
-    </main>
+    </div>
   );
 }
