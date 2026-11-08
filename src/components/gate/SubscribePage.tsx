@@ -130,9 +130,10 @@ export default function SubscribePage() {
             >
               {FIELDS.map(({ key, label, type, placeholder, required }) => (
                 <div key={key} className="flex flex-col gap-1">
-                  <span className="font-terminal text-[0.65rem] tracking-[0.12em] uppercase text-brand-red">{label}{required ? " *" : ""}</span>
+                  <label htmlFor={`subscribe-${key}`} className="font-terminal text-[0.65rem] tracking-[0.12em] uppercase text-brand-red">{label}{required ? " *" : ""}</label>
                   <input
                     id={`subscribe-${key}`}
+                    required={required}
                     aria-invalid={Boolean(errors[key])}
                     aria-describedby={errors[key] ? `subscribe-${key}-error` : undefined}
                     type={type}
