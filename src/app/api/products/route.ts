@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoose";
 import { Product } from "@/lib/models/product";
 import { NEW_WINDOW_MS } from "@/lib/new-products";
+import { requireMemberSession } from "@/lib/auth/member-guard";
 
 export async function GET(req: NextRequest) {
+  const denied = await requireMemberSession(req);
+  if (denied) return denied;
+
   try {
     await connectDB();
 

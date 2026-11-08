@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "CÓDIGO INVÁLIDO" }, { status: 401 });
     }
 
-    const token = await signMemberToken();
+    const token = await signMemberToken(entry.tokenVersion ?? 0);
     const res = NextResponse.json({ ok: true });
     res.cookies.set("member_token", token, {
       httpOnly: true,

@@ -4,7 +4,7 @@ import { connectDB } from "@/lib/db/mongoose";
 import { Login } from "@/lib/models/login";
 import { Admin } from "@/lib/models/admin";
 import { requireAdmin } from "@/lib/auth/admin-guard";
-import { verifyAdminToken } from "@/lib/auth/jwt";
+import { verifyAdminToken, signAdminToken } from "@/lib/auth/jwt";
 
 export async function PATCH(req: NextRequest) {
   const denied = await requireAdmin(req);
@@ -18,9 +18,13 @@ export async function PATCH(req: NextRequest) {
       const value = typeof body.value === "string" ? body.value.trim() : null;
       if (!value) return NextResponse.json({ error: "CONTRASEÑA INVÁLIDA" }, { status: 400 });
       await connectDB();
+      // El contador se incrementa al rotar: los tokens de miembro ya emitidos
+      // llevan la versión anterior y dejan de valer en la guarda de sesión.
+      const previa = await Login.findOne({}).select("tokenVersion").lean();
+      const version = (previa?.tokenVersion ?? 0) + 1;
       const hash = await bcrypt.hash(value, 12);
       await Login.deleteMany({});
-      await Login.create({ password: hash });
+      await Login.create({ password: hash, tokenVersion: version });
       return NextResponse.json({ ok: true });
     }
 
@@ -45,8 +49,25 @@ export async function PATCH(req: NextRequest) {
         return NextResponse.json({ error: "ESE USUARIO YA EXISTE" }, { status: 409 });
       }
       const newHash = await bcrypt.hash(newPassword, 12);
-      await Admin.findByIdAndUpdate(admin._id, { username: newUsername, password: newHash });
-      return NextResponse.json({ ok: true });
+      // Incrementar el contador invalida cualquier otra sesión admin abierta.
+      const version = (admin.tokenVersion ?? 0) + 1;
+      await Admin.findByIdAndUpdate(admin._id, {
+        username: newUsername,
+        password: newHash,
+        tokenVersion: version,
+      });
+
+      // La sesión que hace el cambio recibe un token con la versión nueva para
+      // no quedarse fuera en el mismo acto.
+      const res = NextResponse.json({ ok: true });
+      res.cookies.set("admin_token", await signAdminToken(String(admin._id), version), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 8,
+        path: "/",
+      });
+      return res;
     }
 
     return NextResponse.json({ error: "TIPO INVÁLIDO" }, { status: 400 });
