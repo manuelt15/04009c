@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useFocusTrap } from "@/lib/a11y/useFocusTrap";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
@@ -10,17 +11,13 @@ export default function MobileMenu() {
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const dialogRef = useFocusTrap<HTMLElement>(open);
 
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = previous;
-      window.removeEventListener("keydown", onKey);
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
   function goToAdmin() {
@@ -34,6 +31,7 @@ export default function MobileMenu() {
         onClick={() => setOpen(true)}
         aria-label="Abrir menú"
         aria-expanded={open}
+        aria-controls="store-mobile-menu"
         className="text-off-white/70 hover:text-brand-red press p-1"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -53,6 +51,11 @@ export default function MobileMenu() {
               transition={{ duration: 0.2 }}
             />
             <motion.nav
+              ref={dialogRef}
+              id="store-mobile-menu"
+              role="dialog"
+              aria-modal="true"
+              tabIndex={-1}
               aria-label="Menú"
               className="absolute top-0 right-0 h-full w-64 bg-[var(--theme-bg)] border-l border-border flex flex-col"
               initial={{ transform: "translateX(100%)" }}
