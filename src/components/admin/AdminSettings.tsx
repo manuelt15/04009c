@@ -67,7 +67,7 @@ export default function AdminSettings() {
         <span className="data-label">// CONTRASEÑA DEL GATE</span>
         <p className="font-terminal text-[11px] text-dim">La clave que los miembros introducen para acceder a la tienda.</p>
         <form onSubmit={handleGatePassword} className="flex flex-col sm:flex-row gap-3">
-          <input type="text" value={gatePassword} onChange={(e) => setGatePassword(e.target.value)}
+          <input aria-label="Nueva contraseña del gate" type="password" value={gatePassword} onChange={(e) => setGatePassword(e.target.value)}
             placeholder="NUEVA CONTRASEÑA"
             className="flex-1 bg-[var(--theme-bg)] border border-border text-off-white font-terminal text-sm px-4 py-2 focus:outline-none focus:border-brand-red transition-colors placeholder:text-dim/50" />
           <button type="submit"
@@ -83,12 +83,12 @@ export default function AdminSettings() {
         <p className="font-terminal text-[11px] text-dim">Cambia tu usuario y contraseña de acceso al panel.</p>
         <form onSubmit={handleAdminCredentials} className="flex flex-col gap-3">
           <input type="password" value={currentPass} onChange={(e) => setCurrentPass(e.target.value)}
-            placeholder="CONTRASEÑA ACTUAL"
+            placeholder="CONTRASEÑA ACTUAL" aria-label="Contraseña actual de administrador"
             className="bg-[var(--theme-bg)] border border-border text-off-white font-terminal text-sm px-4 py-2 focus:outline-none focus:border-brand-red transition-colors placeholder:text-dim/50" />
           <input type="text" value={newUsername} onChange={(e) => setNewUsername(e.target.value)}
-            placeholder="NUEVO USUARIO"
+            placeholder="NUEVO USUARIO" aria-label="Nuevo usuario de administrador"
             className="bg-[var(--theme-bg)] border border-border text-off-white font-terminal text-sm px-4 py-2 focus:outline-none focus:border-brand-red transition-colors placeholder:text-dim/50" />
-          <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
+          <input aria-label="Nueva contraseña de administrador" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
             placeholder="NUEVA CONTRASEÑA"
             className="bg-[var(--theme-bg)] border border-border text-off-white font-terminal text-sm px-4 py-2 focus:outline-none focus:border-brand-red transition-colors placeholder:text-dim/50" />
           <button type="submit"
