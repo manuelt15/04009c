@@ -94,7 +94,7 @@ export default function PasswordGate() {
             transition={{ duration: 0.6, delay: 0.35 }}
             className="font-terminal text-[10px] uppercase text-dim tracking-[0.3em]"
           >
-            Pulsa los números
+            // ENTRAR
           </motion.span>
         )}
 
