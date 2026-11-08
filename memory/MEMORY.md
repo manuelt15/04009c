@@ -3,6 +3,7 @@
 Fuente de verdad del proyecto. Leer al iniciar cada sesión.
 
 ## Índice
+- [Maqueta pública, portada `// ENTRAR` y `/subscribe` cerrado (2026-11-08)](handovers/HANDOVER-2026-11-08-maqueta-publica-y-demo-sin-hidratacion.md) — cierre de la tanda: la pista de la portada, el aviso de suscripción, y el hallazgo de que `next dev` no hidrata en este entorno (0 fibers, `__next_f` vacío, sin errores); el demo compila y se sirve en producción.
 - [Autenticación retirada (2026-11-08)](auth-aparcada.md) — la web es pública; el JWT antiguo se retiró y vuelve con better-auth.
 - [Cierre local de hallazgos 2026-11-08](handovers-archive/HANDOVER-2026-11-08-cierre-hallazgos-local.md) — 35 cierres, 3 residuales; tsc/tests verdes, lint previo y build offline bloqueado; SIN PUSH.
 - [Estado de remediación](security-remediation.md) — tokens, accesibilidad, dependencias y límites de login.
@@ -16,12 +17,15 @@ Fuente de verdad del proyecto. Leer al iniciar cada sesión.
 ## Estado local — 2026-11-08 (demo pública)
 
 - La web es **pública, sin clave**: portada con número pulsable → ACCEDER → `/store`.
+- La pista sobre el número es **`// ENTRAR`** (antes «Pulsa los números»): etiqueta de zona en estilo terminal, no instrucción.
+- `/subscribe` está **cerrado como aviso**: «// PRÓXIMAMENTE» + «Pronto tendrás más acceso…» + «MIENTRAS TANTO, LA COLECCIÓN ESTÁ ABIERTA.». Sin formulario; la API sigue existiendo pero nadie la llama.
 - Panel `/admin` = vista de prueba de solo lectura con datos inventados (`src/lib/demo-data.ts`); banner fijo en todas las pantallas; `/api/admin/*` solo `GET`, el resto `405`.
 - Checkout de ejemplo: carrito de ejemplo, «Pago con Stripe — próximamente», sin escribir pedidos.
 - El JWT antiguo se retiró: no queda código de sesión ni variables `JWT_SECRET_*`. Vuelve con better-auth.
 - `JWT_SECRET_MEMBER` y `JWT_SECRET_ADMIN` borradas de Vercel: ninguna ruta las acepta.
 - **Maqueta sin secretos**: `npm run demo` levanta un Mongo en memoria, siembra `src/lib/demo-data.ts` y arranca Next en 3006. `mongodb-memory-server` es devDependency; el binario no se commitea. Sin fallback en producción: sin `MONGODB_URI` la app falla.
 - Verificación: tsc, 15 tests y build, todos con salida real. `npm run demo` compila y sirve en producción (con `next dev` no hidrata en este entorno).
+- `next dev` (Turbopack) **no hidrata en esta máquina**: sirve el HTML correcto pero React no engancha (0 elementos con fiber, `window.__next_f` vacío, sin errores en consola). No lo causaron los cambios: el commit original falla igual. El demo compila y sirve con `next build` + `next start`.
 
 ## Estado local — 2026-11-08 (tanda anterior)
 
@@ -41,8 +45,8 @@ Fuente de verdad del proyecto. Leer al iniciar cada sesión.
 - **Decidido 2026-09-27:** se pule esta tienda y ya. Descartado convertirla en plataforma multi-tienda o plantilla.
 
 ## Todo construido y funcionando
-- Entrada `/` con audio, esquinas (coordenadas de LA, ADMINISTRADOR → panel) y número pulsable
-- About y Solicitar acceso en español, sin esquinas, con validación y avisos
+- Entrada `/` con audio, esquinas (coordenadas de LA, ADMINISTRADOR → panel) y número pulsable, con la pista `// ENTRAR`
+- About en español; Solicitar acceso es un aviso «próximamente» (formulario desactivado)
 - Tema que sigue al sistema (azul/negro) con selector AUTO / AZUL / NEGRO
 - Tienda: cabecera con carrito y menú móvil, pie, categorías desde BD, TODO/NUEVOS automáticas, NUEVO en card
 - Ficha: tallas con stock, guía de medidas, cantidad; carrito lateral (localStorage); checkout con modal de Stripe
@@ -82,3 +86,4 @@ Fuente de verdad del proyecto. Leer al iniciar cada sesión.
 - Producto sin `sizes` = sin control de stock (todas las tallas); agotado = manual o todas a 0 (`lib/stock.ts`)
 - Carrito solo en el navegador; precios a recalcular en servidor cuando llegue Stripe
 - Sin dependencias nuevas: avisos, carrito y modales hechos a mano
+- La maqueta se sirve compilada (`next build` + `next start`), no con `next dev`: el dev server de Turbopack no hidrata en esta máquina

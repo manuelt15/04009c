@@ -7,6 +7,7 @@ Errores encontrados y sus fixes. Actualizar tras cada corrección.
 - **Corrección → causa → fix → regla:** el test de foco introdujo `no-this-alias` en un doble DOM mínimo → no se pasó lint específico antes del commit → excepción documentada solo en la línea de fixture → ejecutar test y lint de los ficheros nuevos antes de cerrar cada commit granular.
 - **Corrección → causa → fix → regla:** build offline no terminó → `next/font/google` descarga fuentes durante compilación → mantener el fallo real sin mocks ni cambio de tipografía → no dar por verde un build bloqueado por red; resolver activos o autorización de entorno por separado.
 - **Corrección → causa → fix → regla:** lint global seguía rojo → 20 errores y 2 avisos ya estaban en el baseline → comparar ESLint por fichero/regla contra `git show` → demostrar preexistencia, no arreglar código adyacente por intuición.
+- **Corrección → causa → fix → regla:** la maqueta se veía rota en el navegador (todo en opacidad 0, sin errores en consola) → el servidor de desarrollo servía HTML correcto pero React no hidrataba → comprobar fiber de React y `window.__next_f` en el navegador, no solo el HTML y los códigos HTTP → **un servidor de desarrollo que sirve HTML correcto no prueba que la app funcione; si el cliente no hidrata, nada de lo interactivo existe.** Medir en el navegador (0 elementos con fiber, `__next_f` vacío, consola muda) antes de tocar el código, y aislar con el commit original para no culpar a los cambios propios.
 
 ---
 
