@@ -183,6 +183,14 @@ export default function ProductDetail({ product, guide }: Props) {
 
           {!soldOut && (
             <div className="flex flex-col gap-5 max-w-sm">
+              {/* Aviso de maqueta junto al gesto de compra */}
+              <p
+                role="note"
+                className="font-terminal text-[10px] tracking-[0.12em] uppercase text-brand-red border border-brand-red px-3 py-2 leading-relaxed"
+              >
+                Maqueta — talla y precio de ejemplo: se añade al carrito, pero no se compra nada
+              </p>
+
               {/* Talla */}
               <div className="flex flex-col gap-2">
                 <span className={LABEL}>TALLA</span>
