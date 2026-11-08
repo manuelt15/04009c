@@ -27,6 +27,7 @@ export default function ProductGrid() {
       <CategoryNav active={activeCategory} onChange={setActiveCategory} />
 
       <section className="flex-1 px-6 py-8">
+        <h1 className="sr-only">Catálogo de House of Access</h1>
         {/* Al cambiar de categoría se mantienen los productos anteriores hasta que llegan los nuevos */}
         {loading && products.length === 0 ? (
           <div className="flex items-center justify-center py-24">
