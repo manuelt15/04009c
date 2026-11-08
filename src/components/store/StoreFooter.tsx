@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 const HEADING = "font-terminal text-[0.65rem] tracking-[0.12em] uppercase text-brand-red";
 const LINK = "font-terminal text-[11px] text-dim hover:text-off-white tracking-widest uppercase transition-colors text-left";
 // Páginas que toda tienda necesita pero que aún no existen: se muestran sin enlace hasta tener contenido
-const PENDING = "font-terminal text-[11px] text-dim/50 tracking-widest uppercase cursor-default";
+const PENDING = "font-terminal text-[11px] text-dim tracking-widest uppercase cursor-default";
 
 const HELP = ["ENVÍOS Y DEVOLUCIONES", "GUÍA DE TALLAS", "PREGUNTAS FRECUENTES"];
 const LEGAL = ["AVISO LEGAL", "POLÍTICA DE PRIVACIDAD", "POLÍTICA DE COOKIES", "CONDICIONES DE COMPRA"];

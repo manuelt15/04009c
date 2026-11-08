@@ -113,7 +113,7 @@ export default function AdminOrders() {
       {orders.length === 0 ? (
         <div className="bg-surface border border-border p-8 flex flex-col items-center gap-2">
           <span className="font-terminal text-[11px] text-dim tracking-widest">{"// SIN PEDIDOS AÚN"}</span>
-          <span className="font-terminal text-[10px] text-dim/50">Los pedidos aparecerán aquí cuando se conecte Stripe</span>
+          <span className="font-terminal text-[10px] text-dim">Los pedidos aparecerán aquí cuando se conecte Stripe</span>
         </div>
       ) : (
         <div className="bg-surface border border-border overflow-x-auto">

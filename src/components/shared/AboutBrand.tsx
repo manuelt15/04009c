@@ -73,7 +73,7 @@ export default function AboutBrand() {
 
       {/* Footer */}
       <footer className="w-full flex items-center justify-center px-6 py-4 border-t border-off-white/10">
-        <span className="font-terminal text-[10px] text-off-white/30 uppercase tracking-wider">
+        <span className="font-terminal text-[10px] text-dim uppercase tracking-wider">
           House of Access — 04009c
         </span>
       </footer>

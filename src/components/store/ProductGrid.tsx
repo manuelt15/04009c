@@ -39,7 +39,7 @@ export default function ProductGrid() {
         ) : products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 gap-2">
             <span className="font-terminal text-[11px] text-dim tracking-widest">// SIN PRODUCTOS</span>
-            <span className="font-terminal text-[10px] text-dim/50">COLECCIÓN EN PREPARACIÓN</span>
+            <span className="font-terminal text-[10px] text-dim">COLECCIÓN EN PREPARACIÓN</span>
           </div>
         ) : (
           <div

@@ -51,7 +51,7 @@ export default function AdminLogin() {
         <Image src="/caballo_blanco.png" alt="04009c" width={40} height={40} className="object-contain opacity-60" />
         <div className="text-center">
           <span className="font-brand text-2xl text-off-white tracking-widest">04009c</span>
-          <p className="font-terminal text-[10px] text-brand-red/60 tracking-widest mt-1">{"// PANEL DE ADMINISTRACIÓN"}</p>
+          <p className="font-terminal text-[10px] text-brand-red tracking-widest mt-1">{"// PANEL DE ADMINISTRACIÓN"}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-3">

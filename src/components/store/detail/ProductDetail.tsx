@@ -199,7 +199,7 @@ export default function ProductDetail({ product, guide }: Props) {
                           onClick={() => chooseSize(s)}
                           className={`w-12 h-11 font-terminal text-sm tracking-widest border press disabled:cursor-not-allowed ${
                             out
-                              ? "border-border text-dim/50 line-through"
+                              ? "border-border text-dim line-through"
                               : size === s
                                 ? "bg-off-white text-black border-off-white"
                                 : "border-border text-off-white hover:border-brand-red"
