@@ -42,7 +42,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     <ToastContext.Provider value={show}>
       {children}
       <div
-        aria-live="polite"
         className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 sm:left-auto sm:right-6 sm:translate-x-0 z-[10000] flex flex-col items-center gap-2 w-[calc(100%-3rem)] max-w-sm pointer-events-none"
       >
         <AnimatePresence initial={false}>
