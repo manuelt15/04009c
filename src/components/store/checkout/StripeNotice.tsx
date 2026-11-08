@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useFocusTrap } from "@/lib/a11y/useFocusTrap";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export default function StripeNotice({ open, onClose }: Props) {
+  const dialogRef = useFocusTrap<HTMLDivElement>(open);
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -31,6 +33,8 @@ export default function StripeNotice({ open, onClose }: Props) {
           />
           <motion.div
             role="dialog"
+            ref={dialogRef}
+            tabIndex={-1}
             aria-modal="true"
             aria-labelledby="stripe-notice-title"
             className="relative w-full max-w-md bg-[var(--theme-bg)] border border-border px-8 py-10 flex flex-col items-center gap-6 text-center"
@@ -59,7 +63,6 @@ export default function StripeNotice({ open, onClose }: Props) {
 
             <button
               onClick={onClose}
-              autoFocus
               className="w-full bg-off-white text-black font-terminal text-sm tracking-widest uppercase py-3 hover:bg-brand-red hover:text-off-white press"
             >
               ENTENDIDO
