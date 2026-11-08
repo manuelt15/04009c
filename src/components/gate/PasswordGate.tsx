@@ -149,6 +149,7 @@ export default function PasswordGate() {
 
               <input
                 ref={inputRef}
+                aria-label="Código de acceso"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
