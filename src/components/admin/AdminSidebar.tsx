@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -51,26 +51,10 @@ function Brand() {
 
 export default function AdminSidebar() {
   const pathname = usePathname();
-  const router   = useRouter();
   const [open, setOpen] = useState(false);
   const dialogRef = useFocusTrap<HTMLElement>(open);
 
   useEffect(() => setOpen(false), [pathname]);
-
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
-
-  // El login vive dentro del layout del panel, pero sin sesión no tiene sentido mostrar el menú
-  if (pathname === "/admin/login") return null;
-
-  async function handleLogout() {
-    await fetch("/api/auth/admin-logout", { method: "POST" });
-    router.push("/admin/login");
-  }
 
   const nav = (
     <nav className="flex-1 py-4 overflow-y-auto" aria-label="Panel">
@@ -107,13 +91,13 @@ export default function AdminSidebar() {
       <div className="self-start">
         <ThemeSwitcher />
       </div>
-      <button
-        onClick={handleLogout}
+      <Link
+        href="/"
         className="flex items-center gap-3 font-terminal text-[10px] text-dim hover:text-brand-red tracking-widest uppercase press self-start"
       >
         <Icon name="salir" size={14} />
-        CERRAR SESIÓN
-      </button>
+        VOLVER A LA WEB
+      </Link>
     </div>
   );
 

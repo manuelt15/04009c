@@ -1,34 +1,24 @@
-import { NextRequest, NextResponse } from "next/server";
-import { connectDB } from "@/lib/db/mongoose";
-import { Order } from "@/lib/models/order";
-import { requireAdmin } from "@/lib/auth/admin-guard";
+import { NextResponse } from "next/server";
+import { DEMO_ORDERS } from "@/lib/demo-data";
+import { escrituraBloqueada } from "@/lib/demo-api";
 
-export async function GET(req: NextRequest) {
-  const denied = await requireAdmin(req);
-  if (denied) return denied;
-  try {
-    await connectDB();
-    const orders = await Order.find().sort({ createdAt: -1 }).lean();
-    return NextResponse.json({ orders });
-  } catch {
-    return NextResponse.json({ error: "ERROR DE SERVIDOR" }, { status: 500 });
-  }
+// Panel de prueba: solo lectura y con datos de ejemplo.
+export async function GET() {
+  return NextResponse.json({ orders: DEMO_ORDERS });
 }
 
-export async function PATCH(req: NextRequest) {
-  const denied = await requireAdmin(req);
-  if (denied) return denied;
-  try {
-    const body = await req.json();
-    const id     = typeof body.id     === "string" ? body.id     : null;
-    const status = typeof body.status === "string" ? body.status : null;
-    if (!id || !status) return NextResponse.json({ error: "PARÁMETROS INVÁLIDOS" }, { status: 400 });
-    await connectDB();
-    const STATUSES = ["pendiente", "confirmado", "enviado", "entregado", "cancelado"];
-    if (!STATUSES.includes(status)) return NextResponse.json({ error: "ESTADO INVÁLIDO" }, { status: 400 });
-    await Order.findByIdAndUpdate(id, { status, $push: { statusHistory: { status, at: new Date() } } });
-    return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ error: "ERROR DE SERVIDOR" }, { status: 500 });
-  }
+export async function POST() {
+  return escrituraBloqueada();
+}
+
+export async function PATCH() {
+  return escrituraBloqueada();
+}
+
+export async function PUT() {
+  return escrituraBloqueada();
+}
+
+export async function DELETE() {
+  return escrituraBloqueada();
 }

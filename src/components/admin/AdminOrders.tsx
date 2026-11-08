@@ -3,16 +3,6 @@
 import { Fragment, useEffect, useState } from "react";
 import type { IOrder, OrderStatus } from "@/lib/models/order";
 import { motion } from "framer-motion";
-import AdminSelect from "./AdminSelect";
-import { useToast } from "@/components/shared/Toaster";
-
-const STATUS_OPTIONS = [
-  { value: "pendiente",  label: "PENDIENTE"  },
-  { value: "confirmado", label: "CONFIRMADO" },
-  { value: "enviado",    label: "ENVIADO"    },
-  { value: "entregado",  label: "ENTREGADO"  },
-  { value: "cancelado",  label: "CANCELADO"  },
-];
 
 const STATUS_COLORS: Record<OrderStatus, string> = {
   pendiente:  "border-brand-red text-brand-red",
@@ -83,31 +73,25 @@ function OrderDetail({ order }: { order: IOrder }) {
   );
 }
 
+// Vista de prueba: los pedidos se ven, pero su estado no se puede cambiar.
 export default function AdminOrders() {
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [open, setOpen] = useState<string | null>(null);
-  const toast = useToast();
 
-  async function load() {
-    const r = await fetch("/api/admin/orders");
-    const d = await r.json();
-    setOrders(d.orders ?? []);
-  }
-
-  useEffect(() => { load(); }, []);
-
-  async function changeStatus(o: IOrder, status: OrderStatus) {
-    if (status === o.status) return;
-    const r = await fetch("/api/admin/orders", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: o._id, status }) });
-    toast(r.ok ? `${o.orderNumber} → ${status.toUpperCase()}` : "NO SE PUDO CAMBIAR EL ESTADO", r.ok ? "success" : "error");
-    load();
-  }
+  useEffect(() => {
+    fetch("/api/admin/orders").then((r) => r.json()).then((d) => setOrders(d.orders ?? []));
+  }, []);
 
   return (
     <div className="p-4 md:p-6 pt-16 md:pt-6 flex flex-col gap-6">
-      <div>
-        <span className="data-label">{"// GESTIÓN"}</span>
-        <h1 className="font-display text-2xl md:text-3xl text-off-white tracking-wider">PEDIDOS</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <span className="data-label">{"// GESTIÓN"}</span>
+          <h1 className="font-display text-2xl md:text-3xl text-off-white tracking-wider">PEDIDOS</h1>
+        </div>
+        <span className="font-terminal text-[10px] text-dim tracking-widest uppercase">
+          Solo lectura · {orders.length} pedidos de ejemplo
+        </span>
       </div>
 
       {orders.length === 0 ? (
@@ -118,10 +102,10 @@ export default function AdminOrders() {
       ) : (
         <div className="bg-surface border border-border overflow-x-auto">
           <table className="w-full min-w-[720px]">
-            <caption className="sr-only">Pedidos de la tienda</caption>
+            <caption className="sr-only">Pedidos de la tienda (datos de ejemplo)</caption>
             <thead className="border-b border-border">
               <tr>
-                {["PEDIDO","FECHA","CLIENTE","TOTAL","ESTADO","CAMBIAR",""].map((h, i) => (
+                {["PEDIDO","FECHA","CLIENTE","TOTAL","ESTADO",""].map((h, i) => (
                   <th scope="col" key={i} className="text-left px-4 py-3 font-terminal text-[10px] text-dim tracking-widest">{h}</th>
                 ))}
               </tr>
@@ -143,9 +127,6 @@ export default function AdminOrders() {
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <AdminSelect value={o.status} options={STATUS_OPTIONS} onChange={(val) => changeStatus(o, val as OrderStatus)} />
-                    </td>
-                    <td className="px-4 py-3">
                       <button
                         onClick={() => setOpen((id) => (id === o._id ? null : o._id))}
                         aria-expanded={open === o._id}
@@ -157,15 +138,15 @@ export default function AdminOrders() {
                     </td>
                   </tr>
                   <tr id={`order-detail-${o._id}`} hidden={open !== o._id}>
-                      <td colSpan={7} className="p-0 border-t border-border">
-                        <motion.div
-                          initial={{ opacity: 0, transform: "translateY(-4px)" }}
-                          animate={{ opacity: 1, transform: "translateY(0px)" }}
-                          transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
-                        >
-                          <OrderDetail order={o} />
-                        </motion.div>
-                      </td>
+                    <td colSpan={6} className="p-0 border-t border-border">
+                      <motion.div
+                        initial={{ opacity: 0, transform: "translateY(-4px)" }}
+                        animate={{ opacity: 1, transform: "translateY(0px)" }}
+                        transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
+                      >
+                        <OrderDetail order={o} />
+                      </motion.div>
+                    </td>
                   </tr>
                 </Fragment>
               ))}
