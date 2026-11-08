@@ -73,6 +73,7 @@ export default function SubscribePage() {
 
   return (
     <main className="relative min-h-dvh bg-[var(--theme-bg)] flex flex-col items-center justify-between overflow-hidden grain">
+      <h1 className="sr-only">Solicitud de acceso</h1>
 
 
       {/* Contenido central */}

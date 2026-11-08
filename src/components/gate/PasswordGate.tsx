@@ -86,6 +86,7 @@ export default function PasswordGate() {
 
   return (
     <main className="relative min-h-dvh bg-[var(--theme-bg)] flex flex-col items-center justify-between overflow-hidden grain">
+      <h1 className="sr-only">Acceso a House of Access</h1>
       <audio ref={audioRef} src="/alien-static.mp3" loop preload="auto" />
 
       {/* Decoraciones de esquina — estilo terminal */}

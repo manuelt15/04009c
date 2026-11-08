@@ -45,6 +45,7 @@ export default function AdminLogin() {
 
   return (
     <main className="min-h-dvh bg-[var(--theme-bg)] flex flex-col items-center justify-center px-8 grain">
+      <h1 className="sr-only">Acceso de administrador</h1>
 
       <div className="w-full max-w-xs flex flex-col items-center gap-6">
         <Image src="/caballo_blanco.png" alt="04009c" width={40} height={40} className="object-contain opacity-60" />
