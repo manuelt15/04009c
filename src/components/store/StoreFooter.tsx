@@ -57,6 +57,8 @@ export default function StoreFooter() {
           <a
             href="https://www.instagram.com/04009c/"
             target="_blank"
+            aria-label="Instagram (abre en una pestaña nueva)"
+            title="Instagram (abre en una pestaña nueva)"
             rel="noopener noreferrer"
             className={`${LINK} flex items-center gap-2`}
           >

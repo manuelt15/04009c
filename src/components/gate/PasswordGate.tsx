@@ -192,6 +192,8 @@ export default function PasswordGate() {
         <a
           href="https://www.instagram.com/04009c/"
           target="_blank"
+          aria-label="Instagram (abre en una pestaña nueva)"
+          title="Instagram (abre en una pestaña nueva)"
           rel="noopener noreferrer"
           className="opacity-50 hover:opacity-100 transition-opacity"
         >
