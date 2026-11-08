@@ -103,6 +103,11 @@ export default function SubscribePage() {
           {success ? (
             <motion.div
               key="success"
+              tabIndex={-1}
+              role="status"
+              aria-live="polite"
+              aria-label="Solicitud enviada. Tu solicitud ha sido recibida. Te contactaremos cuando tu acceso esté listo."
+              ref={(node) => { node?.focus(); }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="w-full flex flex-col items-center gap-4 text-center"
