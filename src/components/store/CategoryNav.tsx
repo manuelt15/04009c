@@ -28,6 +28,7 @@ export default function CategoryNav({ active, onChange }: Props) {
           <li key={cat}>
             <button
               onClick={() => onChange(cat)}
+              aria-pressed={active === cat}
               className={`font-terminal text-[11px] tracking-widest uppercase px-4 py-3 transition-colors relative
                 ${active === cat
                   ? "text-off-white"
