@@ -3,7 +3,7 @@
 Fuente de verdad del proyecto. Leer al iniciar cada sesión.
 
 ## Índice
-- [Autenticación aparcada (2026-11-08)](auth-aparcada.md) — la web es pública; la sesión (member_token/admin_token) queda aparcada en `legacy/auth/` y vuelve con better-auth.
+- [Autenticación retirada (2026-11-08)](auth-aparcada.md) — la web es pública; el JWT antiguo se retiró y vuelve con better-auth.
 - [Cierre local de hallazgos 2026-11-08](handovers-archive/HANDOVER-2026-11-08-cierre-hallazgos-local.md) — 35 cierres, 3 residuales; tsc/tests verdes, lint previo y build offline bloqueado; SIN PUSH.
 - [Estado de remediación](security-remediation.md) — tokens, accesibilidad, dependencias y límites de login.
 - [Handover 2026-09-27](handovers-archive/HANDOVER-2026-09-27-pulido-tienda-carrito-y-panel.md) — pulido completo: tema del sistema, carrito y checkout con aviso de Stripe, tallas con stock, panel con categorías, envíos y medidas editables; todo en producción.
@@ -18,10 +18,10 @@ Fuente de verdad del proyecto. Leer al iniciar cada sesión.
 - La web es **pública, sin clave**: portada con número pulsable → ACCEDER → `/store`.
 - Panel `/admin` = vista de prueba de solo lectura con datos inventados (`src/lib/demo-data.ts`); banner fijo en todas las pantallas; `/api/admin/*` solo `GET`, el resto `405`.
 - Checkout de ejemplo: carrito de ejemplo, «Pago con Stripe — próximamente», sin escribir pedidos.
-- Sesión aparcada en `legacy/auth/` (fuera de `src/`, no compila). Vuelve con better-auth.
-- `JWT_SECRET_MEMBER` y `JWT_SECRET_ADMIN` sin uso desde 2026-11.
+- El JWT antiguo se retiró: no queda código de sesión ni variables `JWT_SECRET_*`. Vuelve con better-auth.
+- `JWT_SECRET_MEMBER` y `JWT_SECRET_ADMIN` borradas de Vercel: ninguna ruta las acepta.
 - **Maqueta sin secretos**: `npm run demo` levanta un Mongo en memoria, siembra `src/lib/demo-data.ts` y arranca Next en 3006. `mongodb-memory-server` es devDependency; el binario no se commitea. Sin fallback en producción: sin `MONGODB_URI` la app falla.
-- Verificación de esta tanda: tsc, tests y build con salida real; servidor local en el puerto 3006, parado al terminar. SIN PUSH.
+- Verificación: tsc, 15 tests y build, todos con salida real. `npm run demo` compila y sirve en producción (con `next dev` no hidrata en este entorno).
 
 ## Estado local — 2026-11-08 (tanda anterior)
 

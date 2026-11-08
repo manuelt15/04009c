@@ -7,9 +7,12 @@ el catálogo es real, el panel es una vista de prueba de solo lectura con datos 
 ejemplo y el checkout muestra el pago con Stripe como «próximamente».
 
 La autenticación (acceso de miembro y de administrador) vuelve con **better-auth**.
-Mientras tanto, el código de la sesión está aparcado en `legacy/auth/`.
+El código antiguo de sesión con JWT se retiró con la web pública; queda documentado
+en [`memory/auth-aparcada.md`](memory/auth-aparcada.md).
 
 En producción: [04009c.vercel.app](https://04009c.vercel.app)
+
+![Portada: el número 04009c bajo la pista // ENTRAR](docs/portada.png)
 
 ![Panel de administración: listado de productos](docs/panel-admin.png)
 
@@ -24,7 +27,7 @@ En producción: [04009c.vercel.app](https://04009c.vercel.app)
 | Estilos | Tailwind CSS v4 (tokens en `globals.css`) |
 | Animaciones | Framer Motion + View Transitions API |
 | Base de datos | MongoDB + Mongoose (Atlas en producción) |
-| Auth | Ninguna por ahora (JWT aparcado en `legacy/auth/`, vuelve con better-auth) |
+| Auth | Ninguna por ahora (el JWT antiguo se retiró; vuelve con better-auth) |
 | Hash de contraseñas | bcryptjs: sin uso en la app, solo en el código aparcado |
 | Gráficas | Recharts |
 | Tema | next-themes (sigue al sistema) |
@@ -42,9 +45,13 @@ npm install
 npm run demo
 ```
 
-Levanta un Mongo **en memoria**, siembra los datos de ejemplo y arranca Next en
-`http://0.0.0.0:3006`. No hace falta `.env.local`, ni Atlas, ni ninguna clave.
+Levanta un Mongo **en memoria**, siembra los datos de ejemplo, **compila** la maqueta y
+la sirve en `http://0.0.0.0:3006`. No hace falta `.env.local`, ni Atlas, ni ninguna clave.
 Al cerrar (Ctrl+C) se paran el servidor y el Mongo.
+
+Compila porque `next dev` (Turbopack) en algunos entornos sirve la página pero no hidrata:
+React no engancha y lo que va animado se queda invisible. Compilada funciona igual que
+en producción, que es lo que se quiere enseñar. El primer arranque tarda un par de minutos.
 
 El Mongo en memoria es una **devDependency** (`mongodb-memory-server`): nunca va
 a producción. El binario que descarga se queda en la caché de `node_modules`
@@ -84,14 +91,15 @@ enviar correos, `MAIL_USER` y `MAIL_PASS`. Sin correo, la web funciona igual.
 se quedara sin base de datos y saltyera con datos falsos, sería peor que un error.
 Los datos de ejemplo entran solo por `npm run demo`.
 
-### Variables sin uso desde 2026-11
+### Variables retiradas
 
-Estas dos siguen en el `.env.local` de producción, pero **la web ya no las usa**:
-la clave de acceso y el login del panel están aparcados. Volverán con better-auth.
+`JWT_SECRET_MEMBER` y `JWT_SECRET_ADMIN` **ya no existen en producción ni en el código**.
+Se quitaron de Vercel al desmontar la clave de acceso y el login del panel. El código que
+las leía se retiró en el mismo cambio. Volverán con better-auth, con su propio secreto.
 
 ```env
-JWT_SECRET_MEMBER=<sin uso desde 2026-11; vuelve con better-auth>
-JWT_SECRET_ADMIN=<sin uso desde 2026-11; vuelve con better-auth>
+# JWT_SECRET_MEMBER  → retirada
+# JWT_SECRET_ADMIN   → retirada
 ```
 
 ---
@@ -106,7 +114,7 @@ JWT_SECRET_ADMIN=<sin uso desde 2026-11; vuelve con better-auth>
 
 ### About `/about` y Solicitar acceso `/subscribe`
 - Manifiesto de la marca
-- Formulario de solicitud con validación y email de confirmación
+- `/subscribe`: el formulario está **desactivado** mientras la web es una maqueta. Muestra un aviso «próximamente» con el tono de la casa; no hay campos ni envío a la API
 
 ### Tienda `/store` (pública)
 - Cabecera: caballo → about, `04009c` → inicio, modos AUTO / AZUL / NEGRO, carrito, administrador. En móvil, menú lateral
@@ -151,14 +159,12 @@ src/
 ├── components/
 │   ├── gate/  store/  store/cart/  store/checkout/  admin/  admin/charts/  shared/
 ├── lib/
-│   ├── auth/  db/  models/       → jwt, rate-limit, session-version; product, order, category, store-settings, subscriber, admin, login
+│   ├── db/  models/             → conexión y modelos: product, order, category, store-settings, subscriber
 │   ├── cart-store.ts             → carrito (localStorage)
 │   ├── demo-data.ts              → datos INVENTADOS del panel de prueba
 │   ├── stock.ts  size-guide.ts  shipping.ts  new-products.ts
 │   └── store-config.ts           → categorías y ajustes, con valores iniciales si no existen
-├── proxy.ts                      → hoy no bloquea nada; aquí vuelve better-auth
-├── demo-data.ts                  → datos INVENTADOS (panel de prueba y siembra de la demo)
-└── legacy/auth/                  → sesión aparcada (login, guards, AdminLogin): vuelve con better-auth
+└── proxy.ts                      → hoy no bloquea nada; aquí vuelve better-auth
 
 scripts/
 └── demo.mjs                      → npm run demo: Mongo en memoria + siembra + Next en 3006
@@ -190,7 +196,7 @@ Referencia completa en [`DESIGN.md`](DESIGN.md).
 
 - [ ] Stripe: pagos reales y creación de pedidos (el modelo de pedido ya guarda talla, envío e historial)
 - [ ] Publicar la maqueta (hoy `npm run demo` solo funciona en local)
-- [ ] Autenticación con better-auth: recuperar de `legacy/auth/` la clave de acceso y el login del panel
+- [ ] Autenticación con better-auth: clave de acceso y login del panel, de cero (el JWT antiguo se retiró)
 - [ ] Subida de fotos (Cloudinary o Vercel Blob): el botón está en el panel, desactivado
 - [ ] Fotos propias de la marca: las actuales son de prueba
 - [ ] Textos de envíos, devoluciones, guía de tallas y legales

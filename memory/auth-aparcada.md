@@ -1,9 +1,15 @@
-# Autenticación aparcada (2026-11-08)
+# Autenticación (retirada el 2026-11-08)
 
-La web pasa a ser **pública**: se enseña como maqueta completa, sin clave de acceso.
-La autenticación no se borra: se aparca para cuando vuelva con **better-auth**.
+La web pasó a ser **pública**: se enseña como maqueta completa, sin clave de acceso.
+El código de autenticación con JWT se **retiró** en esa misma tanda, no se aparcó:
+seguía citando `JWT_SECRET_MEMBER` y `JWT_SECRET_ADMIN` dentro de `src/`, y esos dos
+secretos estuvieron publicados en el README en 2026-05, así que conservarlo era
+mantener vivo un cabo suelto sin uso.
 
-## Qué había antes
+Vuelve con **better-auth**, que gestiona sus propias sesiones y su propio secreto.
+Del esquema viejo **no se reutiliza nada**.
+
+## Qué había antes y qué hay ahora
 
 | Zona | Antes | Ahora |
 |---|---|---|
@@ -11,85 +17,73 @@ La autenticación no se borra: se aparca para cuando vuelva con **better-auth**.
 | `/store`, `/api/products` | Cookie `member_token` (JWT con `JWT_SECRET_MEMBER`) | Abiertos, sin sesión |
 | `/admin` | Cookie `admin_token` (JWT con `JWT_SECRET_ADMIN`) | Abierto, vista de prueba de solo lectura |
 | `/admin/login` | Formulario de usuario y contraseña de admin | No existe |
+| `/subscribe` | Formulario de solicitud con validación y correo | Aviso «próximamente», sin campos ni envío |
 
-## Dónde está el código
+## Qué se retiró exactamente
 
-Todo lo de la sesión está en `legacy/auth/` (fuera de `src/`, no se compila ni se
-lintéa, y no entra en el build):
+- `src/proxy.ts`: fuera las dos ramas de verificación. El fichero se queda con
+  `proxy()` devolviendo `NextResponse.next()` y el `matcher` intacto: es donde vuelve
+  better-auth.
+- Rutas `api/auth/{login,logout,admin-login,admin-logout}`.
+- `src/lib/auth/{jwt,rate-limit,session-version}.ts` y los guards de miembro y admin.
+- Componente `AdminLogin` y la página `/admin/login`.
+- Los tests que cubrían ese código (`sesiones`, `rate-limit`, accesibilidad del login):
+  sin sujeto que probar, se van con él. El total pasó de 25 a 15 y siguen en verde.
 
-```
-legacy/auth/
-├── api-auth/login/route.ts          → POST /api/auth/login (cookie member_token)
-├── api-auth/logout/route.ts         → POST /api/auth/logout
-├── api-auth/admin-login/route.ts    → POST /api/auth/admin-login (cookie admin_token)
-├── api-auth/admin-logout/route.ts   → POST /api/auth/admin-logout
-├── admin-guard.ts                   → requireAdmin() de /api/admin/*
-├── member-guard.ts                  → requireMemberSession() de /api/products
-├── admin-login-page/page.tsx        → /admin/login
-├── AdminLogin.tsx                   → componente del formulario de admin
-└── admin-login-accesibilidad.test.mjs → test de accesibilidad del login (ya no aplica)
-```
+Todo sigue en el historial de git, antes del commit `cb52410`.
 
-En `src/lib/auth/` se conserva lo que no tiene cookies y sigue siendo útil:
-`jwt.ts` (firmar y verificar tokens), `rate-limit.ts` (límite de intentos) y
-`session-version.ts` (revocar sesiones al rotar credenciales). Los modelos
-`Login` y `Admin` también siguen en `src/lib/models/`.
+## Variables de entorno
 
-`src/proxy.ts` sigue existiendo con el `matcher` intacto y devuelve
-`NextResponse.next()`: es el sitio donde vuelve better-auth.
+`JWT_SECRET_MEMBER` y `JWT_SECRET_ADMIN` **ya no existen en producción ni en el código**:
+se borraron de Vercel al desmontar los dos accesos. Cualquier valor antiguo que alguien
+tenga en su poder ya no abre nada, porque no queda ninguna ruta que lo acepte.
 
-## Cómo vuelve
+## Cómo vuelve (better-auth)
 
-1. Instalar better-auth y sus variables de entorno.
-2. Traer de `legacy/auth/` la lógica de sesión al modelo de better-auth
-   (la de cookies `member_token` / `admin_token` no vuelve: better-auth gestiona
-   las suyas).
-3. Volver a proteger `/store`, `/api/products`, `/admin` y `/api/admin` en
-   `src/proxy.ts` o con los helpers de better-auth.
-4. `JWT_SECRET_MEMBER` y `JWT_SECRET_ADMIN` son las variables del esquema viejo:
-   dejan de usarse en 2026-11 y el README las marca como «sin uso».
-
-## Variables de entorno sin uso desde 2026-11
-
-`JWT_SECRET_MEMBER` y `JWT_SECRET_ADMIN` siguen en el `.env.local` de producción
-pero la web ya no las lee. No se borran: vuelven con better-auth.
+1. Instalar better-auth y generar su secreto (`BETTER_AUTH_SECRET`).
+2. Definir las tablas de usuario y sesión que pide better-auth.
+3. Proteger `/store`, `/api/products` y `/admin` en `src/proxy.ts` o con sus helpers.
+4. Añadir pruebas de sesión nuevas; no recuperar las viejas.
 
 ## La maqueta sin secretos: `npm run demo`
 
-No hay URI de Atlas y no se va a pedir (Manuel no la saca de Vercel para una
-maqueta). La tienda se ve entera con un **Mongo en memoria**:
+No hay URI de Atlas y no se va a pedir (Manuel no la saca de Vercel para una maqueta).
+La tienda se ve entera con un **Mongo en memoria**:
 
 ```
 npm run demo   →  http://100.79.99.13:3006
 ```
 
-`scripts/demo.mjs` hace cuatro cosas:
+`scripts/demo.mjs` hace cinco cosas:
 
 1. levanta un Mongo en memoria (`dbName: "demo"`),
 2. siembra **desde `src/lib/demo-data.ts`**, el mismo fichero que usa el panel
    (las dos partes cuentan la misma historia),
-3. arranca Next en el puerto 3006 con `0.0.0.0` y `MONGODB_URI` apuntando a ese
+3. **compila** la maqueta (`next build`),
+4. la sirve compilada en el puerto 3006 con `0.0.0.0` y `MONGODB_URI` apuntando al
    Mongo efímero,
-4. al cerrar (Ctrl+C o SIGTERM) mata el servidor y para el Mongo.
+5. al cerrar (Ctrl+C o SIGTERM) mata el servidor y para el Mongo.
+
+Compila, y no usa `next dev`, porque en este entorno **`next dev` (Turbopack) sirve la
+página pero no hidrata**: React no engancha, todo lo que anima se queda en opacidad 0
+y la portada sale vacía sin ningún error en consola. Compilada funciona igual que en
+producción, que es lo que se quiere enseñar.
 
 La siembra es **idempotente**: busca por la clave natural (nombre de categoría,
 slug de producto) y actualiza; correrla dos veces no duplica nada.
-`scripts/demo-idempotencia.mjs` lo comprueba sembrando tres veces seguidas.
 
 `mongodb-memory-server` es **devDependency**: nunca en producción. El binario que
 descarga vive en la caché de `node_modules` y está en `.gitignore`.
 
 **Sin fallback silencioso en producción**: si no hay `MONGODB_URI`, la app falla
-al arrancar, como antes. Que producción enseñara datos falsos por un fallo de
-conexión sería peor que un error. Los datos de ejemplo entran solo por el
-script de demo.
+al arrancar. Que producción enseñara datos falsos por un fallo de conexión sería
+peor que un error. Los datos de ejemplo entran solo por el script de demo.
 
-## Nota sobre datos
+## Datos del panel de prueba
 
-El panel de administración es una vista de prueba: `/admin/*` se alimenta de
-`src/lib/demo-data.ts`, con datos **inventados** (correos con dominio de ejemplo,
-nombres y direcciones ficticios). En producción hay suscriptores y pedidos con
-datos personales, y exponerlos en una maqueta pública sería un problema de
+`/admin/*` se alimenta de `src/lib/demo-data.ts`, con datos **inventados** (correos con
+dominio de ejemplo, nombres y direcciones ficticios). En producción hay suscriptores y
+pedidos con datos personales, y exponerlos en una maqueta pública sería un problema de
 protección de datos, no de diseño. El bloqueo de escrituras va en los dos lados:
 en cliente no hay botones de añadir, editar, borrar ni guardar, y en servidor
 `/api/admin/*` solo admite `GET` (el resto responde `405`).
