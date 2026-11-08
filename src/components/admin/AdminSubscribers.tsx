@@ -54,10 +54,11 @@ export default function AdminSubscribers() {
           </div>
         ) : (
           <table className="w-full min-w-[560px]">
+            <caption className="sr-only">Solicitudes de acceso</caption>
             <thead className="border-b border-border">
               <tr>
                 {["NOMBRE","EMAIL","MÓVIL","CIUDAD","FECHA"].map((h) => (
-                  <th key={h} className="text-left px-4 py-3 font-terminal text-[10px] text-dim tracking-widest">{h}</th>
+                  <th scope="col" key={h} className="text-left px-4 py-3 font-terminal text-[10px] text-dim tracking-widest">{h}</th>
                 ))}
               </tr>
             </thead>

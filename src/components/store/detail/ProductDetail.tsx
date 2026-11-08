@@ -220,11 +220,12 @@ export default function ProductDetail({ product, guide }: Props) {
                 <div className="flex flex-col gap-2">
                   <span className={LABEL}>GUÍA DE MEDIDAS (CM)</span>
                   <table className="w-full font-terminal text-[11px] text-dim border-collapse">
+                    <caption className="sr-only">Guía de medidas en centímetros</caption>
                     <thead>
                       <tr className="border-b border-border">
-                        <th className="text-left font-normal py-1.5">TALLA</th>
-                        <th className="text-left font-normal py-1.5">{guide.columns[0]}</th>
-                        <th className="text-left font-normal py-1.5">{guide.columns[1]}</th>
+                        <th scope="col" className="text-left font-normal py-1.5">TALLA</th>
+                        <th scope="col" className="text-left font-normal py-1.5">{guide.columns[0]}</th>
+                        <th scope="col" className="text-left font-normal py-1.5">{guide.columns[1]}</th>
                       </tr>
                     </thead>
                     <tbody>

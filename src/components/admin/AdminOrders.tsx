@@ -118,10 +118,11 @@ export default function AdminOrders() {
       ) : (
         <div className="bg-surface border border-border overflow-x-auto">
           <table className="w-full min-w-[720px]">
+            <caption className="sr-only">Pedidos de la tienda</caption>
             <thead className="border-b border-border">
               <tr>
                 {["PEDIDO","FECHA","CLIENTE","TOTAL","ESTADO","CAMBIAR",""].map((h, i) => (
-                  <th key={i} className="text-left px-4 py-3 font-terminal text-[10px] text-dim tracking-widest">{h}</th>
+                  <th scope="col" key={i} className="text-left px-4 py-3 font-terminal text-[10px] text-dim tracking-widest">{h}</th>
                 ))}
               </tr>
             </thead>
