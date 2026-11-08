@@ -67,7 +67,7 @@ export default function AdminLogin() {
             aria-label="Usuario"
             autoComplete="username"
             disabled={loading}
-            className="w-full bg-surface border border-border text-off-white font-terminal text-sm px-4 py-3 placeholder:text-dim/50 focus:outline-none focus:border-brand-red transition-colors"
+            className="w-full bg-surface border border-border text-off-white font-terminal text-sm px-4 py-3 placeholder:text-dim/50 focus:border-brand-red transition-colors"
           />
           <input
             type="password"
@@ -79,7 +79,7 @@ export default function AdminLogin() {
             aria-label="Contraseña"
             autoComplete="current-password"
             disabled={loading}
-            className="w-full bg-surface border border-border text-off-white font-terminal text-sm px-4 py-3 placeholder:text-dim/50 focus:outline-none focus:border-brand-red transition-colors"
+            className="w-full bg-surface border border-border text-off-white font-terminal text-sm px-4 py-3 placeholder:text-dim/50 focus:border-brand-red transition-colors"
           />
           <button
             type="submit"

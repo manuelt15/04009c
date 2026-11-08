@@ -10,7 +10,7 @@ import StripeNotice from "./StripeNotice";
 
 const LABEL = "font-terminal text-[0.65rem] tracking-[0.12em] uppercase text-brand-red";
 const INPUT =
-  "w-full bg-transparent border border-border text-off-white font-terminal text-sm px-4 py-3 placeholder:text-dim/60 focus:outline-none focus:border-brand-red transition-colors";
+  "w-full bg-transparent border border-border text-off-white font-terminal text-sm px-4 py-3 placeholder:text-dim/60 focus:border-brand-red transition-colors";
 
 type FieldKey = "email" | "phone" | "firstName" | "lastName" | "address" | "city" | "postalCode" | "province";
 

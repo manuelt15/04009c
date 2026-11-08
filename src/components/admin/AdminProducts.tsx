@@ -17,7 +17,7 @@ interface CategoryOption {
 
 const EMPTY: Partial<IProduct> = { name: "", price: 0, category: "", images: [], description: "", soldOut: false, sizes: [], slug: "", ref: "" };
 const CLOTHING_SIZES: SizeKey[] = ["S", "M", "L", "XL"];
-const INPUT = "bg-[var(--theme-bg)] border border-border text-off-white font-terminal text-sm px-3 py-2 focus:outline-none focus:border-brand-red transition-colors";
+const INPUT = "bg-[var(--theme-bg)] border border-border text-off-white font-terminal text-sm px-3 py-2 focus:border-brand-red transition-colors";
 
 // "Archive Hoodie 003" → "archive-hoodie-003"
 function slugify(text: string): string {

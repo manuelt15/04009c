@@ -156,7 +156,7 @@ export default function PasswordGate() {
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
                 placeholder="_ _ _ _ _ _"
-                className="w-full bg-transparent border border-brand-red text-off-white font-terminal text-sm text-center tracking-[0.3em] px-4 py-3 placeholder:text-brand-red/60 focus:outline-none focus:border-off-white transition-colors disabled:opacity-50"
+                className="w-full bg-transparent border border-brand-red text-off-white font-terminal text-sm text-center tracking-[0.3em] px-4 py-3 placeholder:text-brand-red/60 focus:border-off-white transition-colors disabled:opacity-50"
               />
 
               <button

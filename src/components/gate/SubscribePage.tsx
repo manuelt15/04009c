@@ -147,7 +147,7 @@ export default function SubscribePage() {
                     onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.value }))}
                     placeholder={placeholder}
                     disabled={loading}
-                    className="w-full bg-transparent border border-off-white/30 text-off-white font-terminal text-sm px-4 py-2.5 placeholder:text-off-white/25 focus:outline-none focus:border-brand-red transition-colors disabled:opacity-50"
+                    className="w-full bg-transparent border border-off-white/30 text-off-white font-terminal text-sm px-4 py-2.5 placeholder:text-off-white/25 focus:border-brand-red transition-colors disabled:opacity-50"
                   />
                   {errors[key] && <span id={`subscribe-${key}-error`} className="font-terminal text-xs text-off-white">{errors[key]}</span>}
                 </div>

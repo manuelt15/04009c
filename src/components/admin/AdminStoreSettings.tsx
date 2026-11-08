@@ -7,7 +7,7 @@ import { useToast } from "@/components/shared/Toaster";
 
 type Guides = { tops: SizeGuide; bottoms: SizeGuide };
 
-const INPUT = "bg-[var(--theme-bg)] border border-border text-off-white font-terminal text-sm px-3 py-2 focus:outline-none focus:border-brand-red transition-colors placeholder:text-dim/50";
+const INPUT = "bg-[var(--theme-bg)] border border-border text-off-white font-terminal text-sm px-3 py-2 focus:border-brand-red transition-colors placeholder:text-dim/50";
 const SAVE = "self-start font-terminal text-[11px] tracking-widest uppercase px-5 py-2 bg-off-white text-black hover:bg-brand-red hover:text-off-white press disabled:opacity-40";
 const GUIDE_TITLES: Record<keyof Guides, string> = { tops: "ROPA (HOODIES, CAMISETAS…)", bottoms: "PANTALONES" };
 

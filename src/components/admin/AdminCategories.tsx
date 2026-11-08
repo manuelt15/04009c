@@ -19,7 +19,7 @@ const GUIDE_OPTIONS = [
   { value: "none", label: "TALLA ÚNICA" },
 ];
 
-const INPUT = "bg-[var(--theme-bg)] border border-border text-off-white font-terminal text-sm px-3 py-2 focus:outline-none focus:border-brand-red transition-colors placeholder:text-dim/50";
+const INPUT = "bg-[var(--theme-bg)] border border-border text-off-white font-terminal text-sm px-3 py-2 focus:border-brand-red transition-colors placeholder:text-dim/50";
 
 export default function AdminCategories() {
   const [rows, setRows] = useState<Row[]>([]);
