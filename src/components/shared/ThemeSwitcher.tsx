@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { useSyncExternalStore } from "react";
+import { handleRadioKeys } from "@/lib/a11y/radio";
 
 // "system" sigue al modo claro/oscuro del dispositivo: claro = azul de marca, oscuro = negro
 const OPTIONS = [
@@ -23,7 +24,7 @@ export default function ThemeSwitcher() {
   if (!mounted) return null;
 
   return (
-    <div className="flex items-center border border-border" role="radiogroup" aria-label="Tema">
+    <div className="flex items-center border border-border" role="radiogroup" aria-label="Tema" onKeyDown={handleRadioKeys}>
       {OPTIONS.map((opt) => {
         const active = theme === opt.value;
         return (
@@ -31,6 +32,7 @@ export default function ThemeSwitcher() {
             key={opt.value}
             role="radio"
             aria-checked={active}
+            tabIndex={active || (!theme && opt.value === "system") ? 0 : -1}
             title={opt.title}
             aria-label={opt.title}
             onClick={() => setTheme(opt.value)}

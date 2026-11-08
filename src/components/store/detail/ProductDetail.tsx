@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { handleRadioKeys } from "@/lib/a11y/radio";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import type { IProduct } from "@/lib/models/product";
@@ -186,7 +187,7 @@ export default function ProductDetail({ product, guide }: Props) {
               <div className="flex flex-col gap-2">
                 <span className={LABEL}>TALLA</span>
                 {guide ? (
-                  <div className="flex gap-2" role="radiogroup" aria-label="Talla">
+                  <div className="flex gap-2" role="radiogroup" aria-label="Talla" onKeyDown={handleRadioKeys}>
                     {SIZES.map((s) => {
                       const out = stockOf(s) <= 0;
                       return (
@@ -194,6 +195,7 @@ export default function ProductDetail({ product, guide }: Props) {
                           key={s}
                           role="radio"
                           aria-checked={size === s}
+                          tabIndex={size === s || (size === null && SIZES.find((option) => stockOf(option) > 0) === s) ? 0 : -1}
                           aria-label={out ? `Talla ${s}, agotada` : `Talla ${s}`}
                           disabled={out}
                           onClick={() => chooseSize(s)}
