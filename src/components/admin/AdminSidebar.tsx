@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { useFocusTrap } from "@/lib/a11y/useFocusTrap";
 import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
 
 // Iconos de trazo (24x24) para la navegación del panel
@@ -52,6 +53,7 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const router   = useRouter();
   const [open, setOpen] = useState(false);
+  const dialogRef = useFocusTrap<HTMLElement>(open);
 
   useEffect(() => setOpen(false), [pathname]);
 
@@ -133,6 +135,7 @@ export default function AdminSidebar() {
           onClick={() => setOpen((p) => !p)}
           aria-label={open ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={open}
+          aria-controls="admin-mobile-menu"
           className="p-2 -mr-2 text-off-white/80 hover:text-brand-red press"
         >
           <Icon name={open ? "cerrar" : "menu"} size={20} />
@@ -151,12 +154,19 @@ export default function AdminSidebar() {
               transition={{ duration: 0.2 }}
             />
             <motion.aside
+              ref={dialogRef}
+              id="admin-mobile-menu"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Menú del panel"
+              tabIndex={-1}
               className="absolute top-14 bottom-0 left-0 w-64 flex flex-col bg-[var(--theme-bg)] border-r border-border pb-[env(safe-area-inset-bottom)]"
               initial={{ transform: "translateX(-100%)" }}
               animate={{ transform: "translateX(0%)" }}
               exit={{ transform: "translateX(-100%)", transition: { duration: 0.2, ease: [0.32, 0.72, 0, 1] } }}
               transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
             >
+              <button onClick={() => setOpen(false)} className="font-terminal text-xs text-off-white p-4">CERRAR MENÚ</button>
               {nav}
               {footer}
             </motion.aside>
