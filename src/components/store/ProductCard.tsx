@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import type { IProduct } from "@/lib/models/product";
 import { isNewProduct } from "@/lib/new-products";
@@ -12,26 +12,15 @@ interface Props {
 }
 
 export default function ProductCard({ product, index = 0 }: Props) {
-  const router = useRouter();
-
   const hasImages = product.images.length > 0;
   const primaryImage = product.images[0] ?? null;
   const secondaryImage = product.images[1] ?? null;
 
-  function handleClick() {
-    const navigate = () => router.push(`/store/${product.slug}`);
-    if (typeof document !== "undefined" && document.startViewTransition) {
-      document.startViewTransition(navigate);
-    } else {
-      navigate();
-    }
-  }
-
   return (
+    <Link href={`/store/${product.slug}`} aria-label={product.name}>
     <article
       className="group flex flex-col gap-2 cursor-pointer card-in"
       style={{ animationDelay: `${Math.min(index, 7) * 30}ms` }}
-      onClick={handleClick}
     >
       {/* Imagen */}
       <div
@@ -88,5 +77,6 @@ export default function ProductCard({ product, index = 0 }: Props) {
         </p>
       </div>
     </article>
+    </Link>
   );
 }
