@@ -286,7 +286,7 @@ export default function AdminProducts() {
                   <td className="px-4 py-3 font-terminal text-[11px] text-off-white">{p.price}€</td>
                   <td className="px-4 py-3 font-terminal text-[10px] text-dim whitespace-nowrap">{stockSummary(p.sizes)}</td>
                   <td className="px-4 py-3">
-                    <button onClick={() => toggleSoldOut(p)} title={p.soldOut ? "Quitar agotado manual" : "Marcar agotado a mano"}
+                    <button aria-label={`${out ? "Agotado" : "Disponible"}: cambiar estado de ${p.ref} ${p.name}`} onClick={() => toggleSoldOut(p)} title={p.soldOut ? "Quitar agotado manual" : "Marcar agotado a mano"}
                       className={`font-terminal text-[10px] tracking-widest px-2 py-0.5 border transition-colors
                         ${out ? "border-brand-red text-brand-red hover:bg-brand-red hover:text-off-white" : "border-off-white/40 text-off-white hover:bg-off-white hover:text-black"}`}>
                       {out ? "AGOTADO" : "DISPONIBLE"}
@@ -294,8 +294,8 @@ export default function AdminProducts() {
                   </td>
                   <td className="px-4 py-3">
                     <span className="flex gap-3">
-                      <button onClick={() => startEdit(p)} className="font-terminal text-[10px] text-dim hover:text-off-white transition-colors">EDITAR</button>
-                      <button onClick={() => setToDelete(p)} className="font-terminal text-[10px] text-dim hover:text-brand-red transition-colors">BORRAR</button>
+                      <button aria-label={`Editar ${p.ref} ${p.name}`} onClick={() => startEdit(p)} className="font-terminal text-[10px] text-dim hover:text-off-white transition-colors">EDITAR</button>
+                      <button aria-label={`Borrar ${p.ref} ${p.name}`} onClick={() => setToDelete(p)} className="font-terminal text-[10px] text-dim hover:text-brand-red transition-colors">BORRAR</button>
                     </span>
                   </td>
                 </tr>

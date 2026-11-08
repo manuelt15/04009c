@@ -99,8 +99,8 @@ export default function AdminCategories() {
                 </>
               ) : (
                 <>
-                  <button onClick={() => setEditing({ id: c._id, name: c.name })} className="font-terminal text-[10px] text-dim hover:text-off-white">RENOMBRAR</button>
-                  <button onClick={() => setToDelete(c)} className="font-terminal text-[10px] text-dim hover:text-brand-red">BORRAR</button>
+                  <button aria-label={`Renombrar ${c.name}`} onClick={() => setEditing({ id: c._id, name: c.name })} className="font-terminal text-[10px] text-dim hover:text-off-white">RENOMBRAR</button>
+                  <button aria-label={`Borrar ${c.name}`} onClick={() => setToDelete(c)} className="font-terminal text-[10px] text-dim hover:text-brand-red">BORRAR</button>
                 </>
               )}
             </span>
