@@ -40,6 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Mongo en memoria (mongodb-memory-server): el binario descargado no se commitea
+node_modules/.cache/mongodb-binaries/
+.cache/mongodb-binaries/
+
 # Obsidian vault config (memory/ se abre como vault)
 memory/.obsidian/
 
