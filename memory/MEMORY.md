@@ -3,6 +3,8 @@
 Fuente de verdad del proyecto. Leer al iniciar cada sesión.
 
 ## Índice
+- [Cierre local de hallazgos 2026-11-08](handovers-archive/HANDOVER-2026-11-08-cierre-hallazgos-local.md) — 35 cierres, 3 residuales; tsc/tests verdes, lint previo y build offline bloqueado; SIN PUSH.
+- [Estado de remediación](security-remediation.md) — tokens, accesibilidad, dependencias y límites de login.
 - [Handover 2026-09-27](handovers-archive/HANDOVER-2026-09-27-pulido-tienda-carrito-y-panel.md) — pulido completo: tema del sistema, carrito y checkout con aviso de Stripe, tallas con stock, panel con categorías, envíos y medidas editables; todo en producción.
 - [[design-system]] — Tokens, colores, tipografía, reglas visuales (el acento es ahora el rojo)
 - [[architecture]] — Stack, estructura, rutas, colecciones y cómo arrancar en local sin tocar producción
@@ -10,7 +12,14 @@ Fuente de verdad del proyecto. Leer al iniciar cada sesión.
 - [[lessons]] — Errores encontrados y sus fixes
 - `DESIGN.md` en el repo — referencia visual completa medida sobre el código (2026-09-27)
 
-## Estado actual
+## Estado local — 2026-11-08
+
+- Remediación de 35 hallazgos registrada; abiertos ALTA 2026-11-08-001 y BAJA 042/044.
+- Sin push ni despliegue. tsc y 23 tests verdes; lint previo (20 errores/2 avisos); build bloqueado por fuentes remotas en modo offline.
+- Próximo paso de Manuel: rotación del ALTA, tratamiento del rojo pequeño sobre azul, desbloqueo del build y aprobación antes de cualquier push.
+- Baseline enlaces rotos de memoria: 0 (2026-11-08).
+
+## Estado de producción (histórico)
 > Actualizado: 2026-09-27
 
 - **Fase:** Producción, live en https://04009c.vercel.app

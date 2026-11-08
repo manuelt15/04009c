@@ -2,6 +2,12 @@
 
 Errores encontrados y sus fixes. Actualizar tras cada corrección.
 
+## Remediación local 2026-11-08
+
+- **Corrección → causa → fix → regla:** el test de foco introdujo `no-this-alias` en un doble DOM mínimo → no se pasó lint específico antes del commit → excepción documentada solo en la línea de fixture → ejecutar test y lint de los ficheros nuevos antes de cerrar cada commit granular.
+- **Corrección → causa → fix → regla:** build offline no terminó → `next/font/google` descarga fuentes durante compilación → mantener el fallo real sin mocks ni cambio de tipografía → no dar por verde un build bloqueado por red; resolver activos o autorización de entorno por separado.
+- **Corrección → causa → fix → regla:** lint global seguía rojo → 20 errores y 2 avisos ya estaban en el baseline → comparar ESLint por fichero/regla contra `git show` → demostrar preexistencia, no arreglar código adyacente por intuición.
+
 ---
 
 **Error:** Build falla en Vercel con `Type error` en RevenueChart tooltip formatter
