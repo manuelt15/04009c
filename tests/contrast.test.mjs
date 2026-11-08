@@ -14,3 +14,8 @@ test('007: texto secundario oscuro cumple WCAG AA', () => {
   const color = css.match(/:root \{\s*--theme-dim:\s*#([\da-f]+)/i)[1];
   assert.ok(contrast(color, '080808') >= 4.5);
 });
+test('008: texto secundario azul cumple WCAG AA sin cambiar la marca', () => {
+  const color = css.match(/:root:not\(\.dark\) \{\s*--theme-dim:\s*#([\da-f]+)/i)[1];
+  assert.ok(contrast(color, '04009c') >= 4.5);
+  assert.match(css, /--color-brand-red:\s*#FF0000/);
+});

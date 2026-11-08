@@ -60,6 +60,7 @@
 
 /* ─── Tema: LIGHT (azul de marca) ─── */
 :root:not(.dark) {
+  --theme-dim:     #999999;
   --theme-bg:      #04009c;
   --theme-surface: rgba(0, 0, 80, 0.35);
   --theme-border:  rgba(255, 255, 255, 0.15);
