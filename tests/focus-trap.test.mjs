@@ -10,6 +10,8 @@ test('012: modal mueve, atrapa y devuelve el foco y restaura scroll', () => {
   class Element {
     isConnected = true;
     tabIndex = 0;
+    // Elemento DOM mínimo: su foco actual es la instancia receptora.
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     focus() { active = this; }
     getClientRects() { return [1]; }
   }
