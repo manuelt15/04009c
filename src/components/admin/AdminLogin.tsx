@@ -54,19 +54,29 @@ export default function AdminLogin() {
         </div>
 
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-3">
+          {/* Nombre accesible vía aria-label: el placeholder "USUARIO" NO cuenta
+              como nombre accesible (WCAG 4.1.2 / 2.4.6). */}
           <input
             type="text"
+            id="admin-username"
+            name="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="USUARIO"
+            aria-label="Usuario"
+            autoComplete="username"
             disabled={loading}
             className="w-full bg-surface border border-border text-off-white font-terminal text-sm px-4 py-3 placeholder:text-dim/50 focus:outline-none focus:border-brand-red transition-colors"
           />
           <input
             type="password"
+            id="admin-password"
+            name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="CONTRASEÑA"
+            aria-label="Contraseña"
+            autoComplete="current-password"
             disabled={loading}
             className="w-full bg-surface border border-border text-off-white font-terminal text-sm px-4 py-3 placeholder:text-dim/50 focus:outline-none focus:border-brand-red transition-colors"
           />
