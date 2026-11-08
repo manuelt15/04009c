@@ -18,7 +18,7 @@
   --color-amber:        #F0A500;
   --color-black:        #080808;
   --color-off-white:    #E2E2E2;
-  --color-dim:          #6B6B6B;
+  --color-dim:          var(--theme-dim);
 
   /* Tokens semánticos — se sobreescriben por tema */
   --color-bg:           var(--theme-bg);
@@ -52,6 +52,7 @@
 
 /* ─── Tema: DARK (negro) — por defecto ─── */
 :root {
+  --theme-dim:     #888888;
   --theme-bg:      #080808;
   --theme-surface: #1A1A1A;
   --theme-border:  #2A2A2A;
