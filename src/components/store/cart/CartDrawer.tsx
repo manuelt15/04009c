@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useFocusTrap } from "@/lib/a11y/useFocusTrap";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,17 +20,12 @@ export default function CartDrawer({ open, onClose }: Props) {
   const items = useCart();
   const router = useRouter();
 
-  // Escape para cerrar y sin scroll de fondo mientras está abierto
+  const dialogRef = useFocusTrap<HTMLElement>(open);
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = previous;
-      window.removeEventListener("keydown", onKey);
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
   function goToCheckout() {
@@ -50,6 +46,8 @@ export default function CartDrawer({ open, onClose }: Props) {
             transition={{ duration: 0.2 }}
           />
           <motion.aside
+            ref={dialogRef}
+            tabIndex={-1}
             role="dialog"
             aria-modal="true"
             aria-label="Carrito"
