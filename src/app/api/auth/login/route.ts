@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { connectDB } from "@/lib/db/mongoose";
 import { Login } from "@/lib/models/login";
 import { signMemberToken } from "@/lib/auth/jwt";
+import { limitLoginAttempt } from "@/lib/auth/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,6 +13,9 @@ export async function POST(req: NextRequest) {
     if (!password) {
       return NextResponse.json({ error: "CÓDIGO REQUERIDO" }, { status: 400 });
     }
+
+    const limited = limitLoginAttempt(req, "member", "gate");
+    if (limited) return limited;
 
     await connectDB();
     const entry = await Login.findOne({});

@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { connectDB } from "@/lib/db/mongoose";
 import { Admin } from "@/lib/models/admin";
 import { signAdminToken } from "@/lib/auth/jwt";
+import { limitLoginAttempt } from "@/lib/auth/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,6 +14,9 @@ export async function POST(req: NextRequest) {
     if (!username || !password) {
       return NextResponse.json({ error: "CREDENCIALES REQUERIDAS" }, { status: 400 });
     }
+
+    const limited = limitLoginAttempt(req, "admin", username);
+    if (limited) return limited;
 
     await connectDB();
     // Buscar solo por username — nunca por password en la query
