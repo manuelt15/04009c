@@ -148,14 +148,14 @@ export default function AdminOrders() {
                       <button
                         onClick={() => setOpen((id) => (id === o._id ? null : o._id))}
                         aria-expanded={open === o._id}
+                        aria-controls={`order-detail-${o._id}`}
                         className="font-terminal text-[10px] text-dim hover:text-off-white tracking-widest transition-colors whitespace-nowrap"
                       >
                         {open === o._id ? "CERRAR ▴" : "DETALLE ▾"}
                       </button>
                     </td>
                   </tr>
-                  {open === o._id && (
-                    <tr>
+                  <tr id={`order-detail-${o._id}`} hidden={open !== o._id}>
                       <td colSpan={7} className="p-0 border-t border-border">
                         <motion.div
                           initial={{ opacity: 0, transform: "translateY(-4px)" }}
@@ -165,8 +165,7 @@ export default function AdminOrders() {
                           <OrderDetail order={o} />
                         </motion.div>
                       </td>
-                    </tr>
-                  )}
+                  </tr>
                 </Fragment>
               ))}
             </tbody>
