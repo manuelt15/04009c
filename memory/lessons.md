@@ -100,3 +100,10 @@ Errores encontrados y sus fixes. Actualizar tras cada corrección.
 **Error:** Cambiar credenciales buscaba al admin por el usuario NUEVO (el token no identificaba a nadie)
 **Fix:** El JWT admin lleva `sub` = id del admin y la ruta busca por él; las sesiones antiguas deben volver a entrar
 **No hacer:** No buscar el registro a modificar con datos que envía el propio formulario
+
+---
+
+**Error:** El aviso de «esto es una maqueta» estaba solo en la cabecera de la página, y quien abría una ficha a mirar tallas no lo tenía delante
+**Causa:** Un aviso en el layout se pierde en cuanto el visitante baja o entra en una interacción; la duda («¿esto me lo cobran?») aparece en el gesto, no al principio
+**Fix:** Aviso propio junto al selector de talla y al pago, además del general
+**No hacer:** No dar por cubierto un aviso porque esté «en la página»: tiene que estar donde ocurre la acción
