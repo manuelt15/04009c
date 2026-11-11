@@ -19,4 +19,7 @@ const SubscriberSchema = new Schema<ISubscriber>(
   { timestamps: true }
 );
 
+// Los registros son de un formulario cerrado: si alguno quedó guardado, caduca solo.
+SubscriberSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 180 });
+
 export const Subscriber = models.Subscriber || model<ISubscriber>("Subscriber", SubscriberSchema);
