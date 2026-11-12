@@ -3,6 +3,7 @@
 Fuente de verdad del proyecto. Leer al iniciar cada sesión.
 
 ## Índice
+- [Pendientes](pending.md) — lo abierto: primitivas de UI en Base UI (la regla del toolkit pide Radix).
 - [Avisos de maqueta en tienda, ficha y pago (2026-11-08)](handovers/HANDOVER-2026-11-08-avisos-de-maqueta.md) — franjas de ejemplo en el layout de `/store`, en el pago y junto a las tallas; quedan tres avisos en el checkout y sobra el recuadro viejo.
 - [Maqueta pública, portada `// ENTRAR` y `/subscribe` cerrado (2026-11-08)](handovers/HANDOVER-2026-11-08-maqueta-publica-y-demo-sin-hidratacion.md) — cierre de la tanda: la pista de la portada, el aviso de suscripción, y el hallazgo de que `next dev` no hidrata en este entorno (0 fibers, `__next_f` vacío, sin errores); el demo compila y se sirve en producción.
 - [Autenticación retirada (2026-11-08)](auth-aparcada.md) — la web es pública; el JWT antiguo se retiró y vuelve con better-auth.
