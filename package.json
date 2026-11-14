@@ -39,5 +39,9 @@
     "shadcn": "^4.8.3",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "source-map-js": "^1.2.2",
+    "baseline-browser-mapping": "^2.11.37"
   }
 }
